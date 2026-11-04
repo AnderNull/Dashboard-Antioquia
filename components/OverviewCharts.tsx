@@ -29,7 +29,7 @@ const GRID = "#e7e6e2";
 function TooltipBox({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-lg">
+    <div className="glass-strong rounded-lg px-3 py-2 text-xs">
       <p className="mb-1 font-semibold text-ink-900">{label}</p>
       {payload.map((p) => (
         <p key={p.name} className="flex items-center gap-2 text-slate-600">
@@ -69,7 +69,7 @@ export default function OverviewCharts({ modulos, porTipo }: { modulos: ModuloRo
                   <th className="py-2 pl-2 text-right">Avance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 tabular-nums">
+              <tbody className="divide-y divide-white/60 tabular-nums">
                 {modulos.map((m) => (
                   <tr key={m.modulo}>
                     <td className="py-2 pr-3 font-medium text-ink-900">{m.modulo}</td>
@@ -87,7 +87,7 @@ export default function OverviewCharts({ modulos, porTipo }: { modulos: ModuloRo
               <CartesianGrid horizontal={false} stroke={GRID} />
               <XAxis type="number" allowDecimals={false} tick={AXIS} axisLine={false} tickLine={false} />
               <YAxis type="category" dataKey="modulo" width={150} tick={AXIS} axisLine={false} tickLine={false} />
-              <Tooltip content={<TooltipBox />} cursor={{ fill: "#f1f5f9" }} />
+              <Tooltip content={<TooltipBox />} cursor={{ fill: "rgba(255,255,255,0.45)" }} />
               <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 12, color: "#52514e" }} />
               {SERIES.map((s, i) => (
                 <Bar
@@ -116,7 +116,7 @@ export default function OverviewCharts({ modulos, porTipo }: { modulos: ModuloRo
                   <span className="truncate pr-2 text-slate-700">{m.modulo}</span>
                   <span className="tabular-nums font-semibold text-ink-900">{m.avance}%</span>
                 </div>
-                <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100">
+                <div className="mt-1 h-2 overflow-hidden rounded-full bg-white/60 ring-1 ring-white/70">
                   <div className="h-full rounded-full bg-[#2a78d6]" style={{ width: `${m.avance}%` }} />
                 </div>
               </li>
@@ -132,7 +132,7 @@ export default function OverviewCharts({ modulos, porTipo }: { modulos: ModuloRo
               <CartesianGrid vertical={false} stroke={GRID} />
               <XAxis dataKey="tipo" tick={{ ...AXIS, fontSize: 10 }} axisLine={false} tickLine={false} interval={0} />
               <YAxis allowDecimals={false} tick={AXIS} axisLine={false} tickLine={false} />
-              <Tooltip content={<TooltipBox />} cursor={{ fill: "#f1f5f9" }} />
+              <Tooltip content={<TooltipBox />} cursor={{ fill: "rgba(255,255,255,0.45)" }} />
               <Bar dataKey="abiertos" name="Bloqueos abiertos" fill="#e34948" radius={[4, 4, 0, 0]} maxBarSize={36} label={{ position: "top", fontSize: 11, fill: "#0b0b0b" }} />
             </BarChart>
           </ResponsiveContainer>

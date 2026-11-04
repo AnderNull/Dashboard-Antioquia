@@ -73,7 +73,10 @@ function sanitizeCell(value: unknown): string {
   return /^[=+\-@]/.test(s) ? `'${s}` : s;
 }
 
-async function readTable(sheet: SheetName): Promise<{ headers: string[]; rows: Row[] }> {
+/** Fila leída + su número real en la hoja (base 1), para no desfasarse si hay filas vacías. */
+type SheetRow = { row: Row; rowNumber: number };
+
+async function readTable(sheet: SheetName): Promise<{ headers: string[]; rows: Row[]; entries: SheetRow[] }> {
   const { spreadsheetId } = getConfig();
   const res = await sheets().spreadsheets.values.get({
     spreadsheetId,
@@ -81,13 +84,17 @@ async function readTable(sheet: SheetName): Promise<{ headers: string[]; rows: R
     valueRenderOption: "FORMATTED_VALUE",
   });
   const values = (res.data.values ?? []) as string[][];
-  if (values.length === 0) return { headers: HEADERS[sheet], rows: [] };
+  if (values.length === 0) return { headers: HEADERS[sheet], rows: [], entries: [] };
   const headers = values[0].map((h) => String(h).trim());
-  const rows = values
-    .slice(1)
-    .filter((r) => r.some((c) => String(c ?? "").trim() !== ""))
-    .map((r) => Object.fromEntries(headers.map((h, i) => [h, String(r[i] ?? "").trim()])));
-  return { headers, rows };
+  const entries: SheetRow[] = [];
+  values.slice(1).forEach((r, i) => {
+    if (!r.some((c) => String(c ?? "").trim() !== "")) return; // ignora filas vacías
+    entries.push({
+      row: Object.fromEntries(headers.map((h, j) => [h, String(r[j] ?? "").trim()])),
+      rowNumber: i + 2, // +1 por el encabezado, +1 porque la hoja es base 1
+    });
+  });
+  return { headers, rows: entries.map((e) => e.row), entries };
 }
 
 async function getSheetId(sheet: SheetName): Promise<number> {
@@ -133,11 +140,11 @@ export async function appendRow(sheet: SheetName, data: Row): Promise<void> {
 /** Actualiza (merge) la fila cuyo ID coincida. Devuelve la fila resultante o null. */
 export async function updateRow(sheet: SheetName, id: string, patch: Row): Promise<Row | null> {
   const { spreadsheetId } = getConfig();
-  const { headers, rows } = await readTable(sheet);
-  const idx = rows.findIndex((r) => r.ID === id);
-  if (idx === -1) return null;
-  const merged: Row = { ...rows[idx], ...patch, ID: id };
-  const rowNumber = idx + 2; // +1 por encabezado, +1 por base 1
+  const { headers, entries } = await readTable(sheet);
+  const found = entries.find((e) => e.row.ID === id);
+  if (!found) return null;
+  const merged: Row = { ...found.row, ...patch, ID: id };
+  const { rowNumber } = found;
   await sheets().spreadsheets.values.update({
     spreadsheetId,
     range: a1(sheet, `A${rowNumber}`),
@@ -149,15 +156,17 @@ export async function updateRow(sheet: SheetName, id: string, patch: Row): Promi
 
 export async function deleteRow(sheet: SheetName, id: string): Promise<boolean> {
   const { spreadsheetId } = getConfig();
-  const { rows } = await readTable(sheet);
-  const idx = rows.findIndex((r) => r.ID === id);
-  if (idx === -1) return false;
+  const { entries } = await readTable(sheet);
+  const found = entries.find((e) => e.row.ID === id);
+  if (!found) return false;
   const sheetId = await getSheetId(sheet);
+  // deleteDimension usa índices base 0: la fila N de la hoja es el índice N-1
+  const start = found.rowNumber - 1;
   await sheets().spreadsheets.batchUpdate({
     spreadsheetId,
     requestBody: {
       requests: [
-        { deleteDimension: { range: { sheetId, dimension: "ROWS", startIndex: idx + 1, endIndex: idx + 2 } } },
+        { deleteDimension: { range: { sheetId, dimension: "ROWS", startIndex: start, endIndex: start + 1 } } },
       ],
     },
   });

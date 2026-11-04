@@ -37,14 +37,18 @@ for (const [sheet, headers] of Object.entries(HEADERS)) {
 
 const [adminEmail, adminName, adminPwd] = process.argv.slice(2);
 if (adminEmail && adminPwd) {
-  const users = await sheets.spreadsheets.values.get({ spreadsheetId, range: a1("Usuarios_Autorizados", "C:C") });
-  const exists = (users.data.values ?? []).flat().some((e) => String(e).toLowerCase() === adminEmail.toLowerCase());
+  const users = await sheets.spreadsheets.values.get({ spreadsheetId, range: a1("Usuarios_Autorizados", "A:C") });
+  const rows = (users.data.values ?? []).slice(1);
+  const exists = rows.some((r) => String(r[2] ?? "").toLowerCase() === adminEmail.toLowerCase());
   if (exists) {
     console.log(`El usuario ${adminEmail} ya existe; no se modificó.`);
   } else {
+    // Siguiente ID consecutivo: U-001, U-002, …
+    const max = rows.reduce((m, r) => Math.max(m, Number(/^U-(\d+)$/.exec(String(r[0] ?? ""))?.[1] ?? 0)), 0);
+    const id = `U-${String(max + 1).padStart(3, "0")}`;
     await sheets.spreadsheets.values.append({
       spreadsheetId, range: a1("Usuarios_Autorizados", "A1"), valueInputOption: "RAW", insertDataOption: "INSERT_ROWS",
-      requestBody: { values: [["U-001", adminName || "Administrador", adminEmail, bcrypt.hashSync(adminPwd, 12), "Admin", "Activo"]] },
+      requestBody: { values: [[id, adminName || "Administrador", adminEmail, bcrypt.hashSync(adminPwd, 12), "Admin", "Activo"]] },
     });
     console.log(`Admin ${adminEmail} creado.`);
   }

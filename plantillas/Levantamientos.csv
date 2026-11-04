@@ -1,0 +1,5 @@
+ID,Codigo_Requerimiento,Descripcion_Gobernacion,Modulo_Afectado,Impacto_Tributario,Estado_Aprobacion,Fecha_Levantamiento
+L-001,REQ-GOB-001,Incluir descuento por pronto pago en el impuesto vehicular según ordenanza vigente,Impuesto Vehicular,Alto,Aprobado,2026-09-12
+L-002,REQ-GOB-002,Permitir consulta de estado de cuenta por placa desde el portal ciudadano,Impuesto Vehicular,Medio,En Revisión,2026-10-03
+L-003,REQ-GOB-003,Actualizar tarifas de estampillas para la vigencia 2026,Estampillas,Alto,Pendiente,2026-10-08
+L-004,REQ-GOB-004,Reporte mensual de cartera en cobro coactivo por municipio,Cobro Coactivo,Bajo,Pendiente,2026-10-22

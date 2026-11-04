@@ -75,7 +75,7 @@ function Overview({ tareas, levantamientos, bloqueos }: Awaited<ReturnType<typeo
           <span className="font-semibold text-ink-900">Avance global</span>
           <span className="tabular-nums text-slate-500">{completadas} / {total} tareas · {pct}%</span>
         </div>
-        <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100">
+        <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/60 ring-1 ring-white/70">
           <div className="h-full rounded-full bg-brand-600 transition-all" style={{ width: `${pct}%` }} />
         </div>
       </div>

@@ -35,6 +35,9 @@ npm run hash-password -- "ContraseñaDelUsuario"
 
 ## Estructura de Google Sheets
 
+> Guía paso a paso completa (Service Account, permisos, formato de cada columna, plantillas CSV y
+> solución de problemas): [docs/GUIA_GOOGLE_SHEETS.md](docs/GUIA_GOOGLE_SHEETS.md).
+
 | Pestaña | Columnas |
 |---|---|
 | `Usuarios_Autorizados` | ID, Nombre, Email, PasswordHash, Rol (Admin / Desarrollador / Gobernacion), Estado (Activo / Inactivo) |

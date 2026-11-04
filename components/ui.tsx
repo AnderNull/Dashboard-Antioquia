@@ -14,7 +14,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
 
 export function DataError({ message }: { message: string }) {
   return (
-    <div className="card flex items-start gap-3 border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
+    <div className="card flex items-start gap-3 !border-amber-200/80 !bg-amber-50/70 p-5 text-sm text-amber-900">
       <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
       <div>
         <p className="font-semibold">No fue posible cargar los datos de Google Sheets</p>
@@ -36,17 +36,17 @@ export function Modal({
   wide?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink-900/50 p-4 backdrop-blur-sm sm:items-center" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink-900/25 p-4 backdrop-blur-md sm:items-center" onMouseDown={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`card my-8 w-full ${wide ? "max-w-2xl" : "max-w-lg"} p-6`}
+        className={`glass-strong rounded-2xl my-8 w-full ${wide ? "max-w-2xl" : "max-w-lg"} p-6`}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink-900">{title}</h2>
-          <button onClick={onClose} className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="Cerrar">
+          <button onClick={onClose} className="rounded p-1 text-slate-400 hover:bg-white/70 hover:text-slate-600" aria-label="Cerrar">
             ✕
           </button>
         </div>

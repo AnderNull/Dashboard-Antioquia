@@ -27,7 +27,7 @@ const COLUMNAS: { estado: EstadoTarea; accent: string }[] = [
 const PRIORIDAD_STYLE: Record<string, string> = {
   Alta: "bg-red-50 text-red-700 ring-red-200",
   Media: "bg-amber-50 text-amber-700 ring-amber-200",
-  Baja: "bg-slate-50 text-slate-600 ring-slate-200",
+  Baja: "bg-white/60 text-slate-600 ring-slate-200",
 };
 
 type Draft = Partial<Tarea> & { Tipo_Bloqueo?: TipoBloqueo };
@@ -201,7 +201,7 @@ export default function KanbanBoard({
           <option value="">Todos los módulos</option>
           {modulos.map((m) => <option key={m}>{m}</option>)}
         </select>
-        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
+        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/80 bg-white/55 px-3 py-2 text-sm text-slate-700 backdrop-blur">
           <input type="checkbox" checked={soloBloq} onChange={(e) => setSoloBloq(e.target.checked)} className="accent-red-600" />
           <Filter className="h-3.5 w-3.5" /> Solo bloqueadas
         </label>
@@ -223,15 +223,15 @@ export default function KanbanBoard({
               onDragLeave={() => setDragOver(null)}
               onDrop={(e) => { e.preventDefault(); setDragOver(null); const id = e.dataTransfer.getData("text/plain"); if (id) moveTo(id, estado); }}
               className={clsx(
-                "flex min-h-[320px] flex-col rounded-2xl border bg-slate-100/70 p-3 transition",
-                dragOver === estado ? "border-brand-500 bg-brand-50" : "border-transparent",
+                "flex min-h-[320px] flex-col rounded-2xl border bg-white/25 p-3 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.6)] backdrop-blur-md transition",
+                dragOver === estado ? "border-brand-500/70 bg-brand-50/60" : "border-white/50",
               )}
             >
               <header className="mb-3 flex items-center justify-between px-1">
                 <h3 className="flex items-center gap-2 text-sm font-semibold text-ink-900">
                   <span className={clsx("h-2.5 w-2.5 rounded-full", accent)} /> {estado}
                 </h3>
-                <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-600">{items.length}</span>
+                <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-600">{items.length}</span>
               </header>
               <div className="flex flex-1 flex-col gap-3">
                 {items.map((t) => {
@@ -244,8 +244,8 @@ export default function KanbanBoard({
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", t.ID)}
                       onClick={() => { setError(null); setDraft({ ...t, Tipo_Bloqueo: log?.Tipo_Bloqueo ?? "Técnico" }); }}
                       className={clsx(
-                        "cursor-pointer rounded-xl border bg-white p-3.5 shadow-sm transition hover:shadow-md",
-                        bloq ? "border-red-300 ring-1 ring-red-200" : "border-slate-200",
+                        "cursor-pointer rounded-xl border bg-white/70 p-3.5 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.9),0_2px_8px_-2px_rgb(15_27_45/0.08)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/85 hover:shadow-lg",
+                        bloq ? "border-red-300/80 ring-1 ring-red-200/70" : "border-white/80",
                         canEdit && "active:cursor-grabbing",
                       )}
                     >
@@ -260,7 +260,7 @@ export default function KanbanBoard({
                         <span className="mt-2 inline-block rounded-md bg-sky-50 px-2 py-0.5 text-[11px] font-medium text-sky-700">{t.Modulo_Taxation}</span>
                       )}
                       {bloq && (
-                        <div className="mt-2.5 rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-800">
+                        <div className="mt-2.5 rounded-lg border border-red-200/80 bg-red-50/70 p-2 text-xs text-red-800">
                           <p className="flex items-center gap-1.5 font-bold uppercase tracking-wide">
                             <Lock className="h-3 w-3" /> Bloqueada{log ? ` · ${log.Tipo_Bloqueo}` : ""}
                           </p>
@@ -287,7 +287,7 @@ export default function KanbanBoard({
 
       {/* Bloqueos */}
       <section className="card overflow-hidden">
-        <header className="flex items-center justify-between border-b border-slate-100 p-5">
+        <header className="flex items-center justify-between border-b border-white/60 p-5">
           <div>
             <h3 className="flex items-center gap-2 font-semibold text-ink-900">
               <AlertOctagon className="h-4 w-4 text-red-600" /> Registro de bloqueos activos
@@ -297,7 +297,7 @@ export default function KanbanBoard({
         </header>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
+            <thead className="bg-white/40 text-left text-xs uppercase text-slate-500">
               <tr>
                 <th className="px-5 py-2.5">ID</th>
                 <th className="px-3 py-2.5">Tarea</th>
@@ -307,7 +307,7 @@ export default function KanbanBoard({
                 <th className="px-5 py-2.5">Estado</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/60">
               {abiertos.length === 0 && (
                 <tr><td colSpan={6} className="px-5 py-8 text-center text-slate-400">No hay bloqueos activos 🎉</td></tr>
               )}
@@ -376,7 +376,7 @@ export default function KanbanBoard({
               <label className="label">Fecha entrega</label>
               <input type="date" className="input" value={draft.Fecha_Entrega ?? ""} onChange={(e) => set("Fecha_Entrega", e.target.value)} />
             </div>
-            <div className="sm:col-span-2 rounded-xl border border-red-200 bg-red-50/50 p-4">
+            <div className="sm:col-span-2 rounded-xl border border-red-200/70 bg-red-50/40 p-4">
               <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-red-800">
                 <input type="checkbox" className="accent-red-600" checked={draft.Bloqueado === "Sí"} onChange={(e) => set("Bloqueado", e.target.checked ? "Sí" : "No")} />
                 <Lock className="h-4 w-4" /> Tarea bloqueada
@@ -424,7 +424,7 @@ export default function KanbanBoard({
       )}
 
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-lg bg-ink-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div>
+        <div className="fixed bottom-6 right-6 z-50 rounded-lg glass-dark px-4 py-3 text-sm text-white">{toast}</div>
       )}
     </div>
   );

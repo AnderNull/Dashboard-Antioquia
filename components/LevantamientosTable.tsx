@@ -167,7 +167,7 @@ export default function LevantamientosTable({
 
       <div className="card overflow-x-auto">
         <table className="w-full min-w-[900px] text-sm">
-          <thead className="bg-slate-50 text-left text-xs text-slate-500">
+          <thead className="bg-white/40 text-left text-xs text-slate-500">
             <tr>
               {th("Codigo_Requerimiento", "Código")}
               {th("Descripcion_Gobernacion", "Descripción")}
@@ -178,12 +178,12 @@ export default function LevantamientosTable({
               <th className="px-3 py-2.5" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-white/60">
             {filtered.length === 0 && (
               <tr><td colSpan={7} className="px-3 py-10 text-center text-slate-400">Sin levantamientos que coincidan</td></tr>
             )}
             {filtered.map((r) => (
-              <tr key={r.ID} className="hover:bg-slate-50/60">
+              <tr key={r.ID} className="transition hover:bg-white/50">
                 <td className="whitespace-nowrap px-3 py-3 font-mono text-xs font-semibold text-ink-900">{r.Codigo_Requerimiento}</td>
                 <td className="max-w-md px-3 py-3 text-slate-700"><p className="line-clamp-2">{r.Descripcion_Gobernacion}</p></td>
                 <td className="px-3 py-3"><span className="rounded-md bg-sky-50 px-2 py-0.5 text-xs text-sky-700">{r.Modulo_Afectado}</span></td>
@@ -206,7 +206,7 @@ export default function LevantamientosTable({
                 <td className="whitespace-nowrap px-3 py-3 text-xs text-slate-500">{r.Fecha_Levantamiento}</td>
                 <td className="whitespace-nowrap px-3 py-3 text-right">
                   {canEdit && (
-                    <button onClick={() => { setError(null); setDraft({ ...r }); }} className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Editar">
+                    <button onClick={() => { setError(null); setDraft({ ...r }); }} className="rounded p-1.5 text-slate-400 hover:bg-white/70 hover:text-slate-700" aria-label="Editar">
                       <Pencil className="h-4 w-4" />
                     </button>
                   )}

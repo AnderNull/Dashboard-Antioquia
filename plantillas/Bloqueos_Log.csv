@@ -1,0 +1,4 @@
+ID,Tarea_ID,Tipo_Bloqueo,Descripcion_Bloqueo,Fecha_Registro,Fecha_Resolucion,Estado
+B-001,T-003,Cliente/Gobernación,Pendiente confirmación de tarifas 2026 por parte de la Gobernación,2026-10-12,,Abierto
+B-002,T-005,Dependencia,Esperando liberación del servicio de consulta del RUNT,2026-10-21,,En Gestión
+B-003,T-004,Técnico,Certificado SSL de ambiente de pruebas PSE vencido,2026-09-20,2026-09-24,Resuelto

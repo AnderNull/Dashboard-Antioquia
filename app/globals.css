@@ -21,36 +21,92 @@
 }
 
 :root {
-  --surface: #f6f7f9;
+  --surface: #eef2f7;
   --chart-surface: #ffffff;
   --text-primary: #0b0b0b;
   --text-secondary: #52514e;
   --grid: #e7e6e2;
+
+  /* ── Crystal clear (glassmorphism) ── */
+  --glass-bg: rgb(255 255 255 / 0.55);
+  --glass-bg-strong: rgb(255 255 255 / 0.78);
+  --glass-border: rgb(255 255 255 / 0.7);
+  --glass-highlight: inset 0 1px 0 0 rgb(255 255 255 / 0.85);
+  --glass-shadow: 0 8px 32px -8px rgb(15 27 45 / 0.14), 0 2px 6px -2px rgb(15 27 45 / 0.06);
+  --glass-blur: 18px;
 }
 
+/* Fondo "aurora": manchas de color difuminadas que se ven a través del cristal */
 body {
-  background: var(--surface);
+  background-color: var(--surface);
+  background-image:
+    radial-gradient(40rem 30rem at 8% 0%, rgb(18 161 80 / 0.20), transparent 60%),
+    radial-gradient(36rem 28rem at 95% 10%, rgb(42 120 214 / 0.22), transparent 60%),
+    radial-gradient(34rem 26rem at 70% 95%, rgb(98 80 214 / 0.16), transparent 60%),
+    radial-gradient(30rem 24rem at 15% 90%, rgb(27 175 122 / 0.14), transparent 60%);
+  background-attachment: fixed;
   color: var(--text-primary);
 }
 
+/* ── Superficies de cristal ── */
+@utility glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+}
+
+/* Variante más opaca para modales y tooltips (prioriza legibilidad) */
+@utility glass-strong {
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), 0 24px 64px -16px rgb(15 27 45 / 0.35);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+/* Cristal oscuro para el sidebar */
+@utility glass-dark {
+  background: linear-gradient(180deg, rgb(15 27 45 / 0.82), rgb(15 27 45 / 0.72));
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow: inset -1px 0 0 0 rgb(255 255 255 / 0.06), 8px 0 32px -12px rgb(15 27 45 / 0.4);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+
 @utility card {
-  @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+  @apply glass rounded-2xl;
 }
 @utility btn {
   @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
 }
 @utility btn-primary {
-  @apply btn bg-brand-600 text-white hover:bg-brand-700;
+  @apply btn bg-brand-600/90 text-white shadow-[0_4px_14px_-4px_rgb(11_138_67/0.6),inset_0_1px_0_0_rgb(255_255_255/0.25)] backdrop-blur hover:bg-brand-700;
 }
 @utility btn-ghost {
-  @apply btn border border-slate-200 bg-white text-slate-700 hover:bg-slate-50;
+  @apply btn border border-white/70 bg-white/50 text-slate-700 shadow-sm backdrop-blur hover:bg-white/80;
 }
 @utility btn-danger {
-  @apply btn bg-red-600 text-white hover:bg-red-700;
+  @apply btn bg-red-600/90 text-white shadow-[0_4px_14px_-4px_rgb(220_38_38/0.55)] backdrop-blur hover:bg-red-700;
 }
 @utility input {
-  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+  @apply w-full rounded-lg border border-white/80 bg-white/60 px-3 py-2 text-sm text-slate-900 shadow-[inset_0_1px_2px_rgb(15_27_45/0.06)] outline-none backdrop-blur transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white/90 focus:ring-2 focus:ring-brand-100;
 }
 @utility label {
   @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500;
+}
+
+/* Accesibilidad: sin transparencias si el usuario lo pide o el navegador no soporta blur */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: rgb(255 255 255 / 0.96);
+    --glass-bg-strong: #ffffff;
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-bg: rgb(255 255 255 / 0.94);
+    --glass-bg-strong: #ffffff;
+  }
 }

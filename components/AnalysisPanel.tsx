@@ -82,14 +82,14 @@ export default function AnalysisPanel() {
       </div>
 
       {error && (
-        <div role="alert" className="card flex items-start gap-2 border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div role="alert" className="card flex items-start gap-2 !border-red-200/80 !bg-red-50/70 p-4 text-sm text-red-700">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> {error}
         </div>
       )}
 
       {loading && !a && (
         <div className="grid gap-4 md:grid-cols-3">
-          {[0, 1, 2].map((i) => <div key={i} className="card h-40 animate-pulse bg-slate-100" />)}
+          {[0, 1, 2].map((i) => <div key={i} className="card h-40 animate-pulse" />)}
         </div>
       )}
 
@@ -109,7 +109,7 @@ export default function AnalysisPanel() {
                 <span className={clsx("rounded-full px-3 py-1 text-sm font-semibold ring-1", salud.ring)}>{salud.label}</span>
                 <div className="flex-1">
                   <div className="flex justify-between text-xs text-slate-500"><span>Puntaje</span><span className="font-semibold tabular-nums text-ink-900">{puntaje}/100</span></div>
-                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-slate-100"><div className={clsx("h-full rounded-full", salud.bar)} style={{ width: `${puntaje}%` }} /></div>
+                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-white/60 ring-1 ring-white/70"><div className={clsx("h-full rounded-full", salud.bar)} style={{ width: `${puntaje}%` }} /></div>
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-slate-700">{a.salud_proyecto.resumen}</p>
@@ -131,7 +131,7 @@ export default function AnalysisPanel() {
                   ["Aprobados", a.metricas_levantamientos.aprobados],
                   ["Pendientes", a.metricas_levantamientos.pendientes],
                 ].map(([k, v]) => (
-                  <div key={k} className="rounded-lg bg-slate-50 p-2">
+                  <div key={k} className="rounded-lg bg-white/50 p-2 ring-1 ring-white/70">
                     <dt className="text-[11px] text-slate-500">{k}</dt>
                     <dd className="text-xl font-bold tabular-nums text-ink-900">{v}</dd>
                   </div>
@@ -145,11 +145,11 @@ export default function AnalysisPanel() {
           {/* Responsabilidad */}
           <section className="card p-5">
             <h3 className="mb-4 font-semibold text-ink-900">Responsabilidad de los bloqueos</h3>
-            <div className="flex h-8 overflow-hidden rounded-lg text-xs font-semibold text-white">
+            <div className="flex h-8 overflow-hidden rounded-lg ring-1 ring-white/70 text-xs font-semibold text-white">
               {tec > 0 && <div className="flex items-center justify-center bg-[#2a78d6]" style={{ width: `${tec}%` }}>{tec}%</div>}
               {tec > 0 && gob > 0 && <div className="w-0.5 bg-white" />}
               {gob > 0 && <div className="flex items-center justify-center bg-[#eb6834]" style={{ width: `${gob}%` }}>{gob}%</div>}
-              {tec === 0 && gob === 0 && <div className="flex w-full items-center justify-center bg-slate-100 text-slate-500">Sin bloqueos registrados</div>}
+              {tec === 0 && gob === 0 && <div className="flex w-full items-center justify-center bg-white/50 text-slate-500">Sin bloqueos registrados</div>}
             </div>
             <div className="mt-2 flex flex-wrap gap-4 text-xs text-slate-600">
               <span className="flex items-center gap-1.5"><Wrench className="h-3.5 w-3.5" /><span className="h-2.5 w-2.5 rounded-sm bg-[#2a78d6]" /> Equipo técnico · {tec}%</span>
@@ -162,7 +162,7 @@ export default function AnalysisPanel() {
                   <thead className="text-left text-xs uppercase text-slate-500">
                     <tr><th className="py-2 pr-3">Tarea</th><th className="px-3 py-2">Responsable</th><th className="py-2 pl-3">Motivo</th></tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-white/60">
                     {a.responsabilidad_bloqueos.bloqueos_criticos.map((b, i) => (
                       <tr key={i}>
                         <td className="py-2 pr-3 font-mono text-xs">{b.tarea_id}</td>
@@ -188,7 +188,7 @@ export default function AnalysisPanel() {
                   </div>
                   <h4 className="font-semibold text-ink-900">{ac.titulo}</h4>
                   <p className="mt-2 flex-1 text-sm text-slate-700">{ac.descripcion}</p>
-                  <div className="mt-4 flex justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                  <div className="mt-4 flex justify-between border-t border-white/60 pt-3 text-xs text-slate-500">
                     <span>👤 {ac.responsable}</span>
                     <span>⏱ {ac.plazo}</span>
                   </div>

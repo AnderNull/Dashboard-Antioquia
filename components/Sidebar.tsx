@@ -43,7 +43,7 @@ export default function Sidebar({
   return (
     <>
       {/* Barra superior móvil */}
-      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between bg-ink-900 px-4 text-white lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between glass-dark border-b px-4 text-white lg:hidden">
         <span className="font-semibold">
           TAXATION <span className="text-brand-500">SMART</span>
         </span>
@@ -51,11 +51,11 @@ export default function Sidebar({
           <Menu className="h-5 w-5" />
         </button>
       </header>
-      {open && <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed inset-0 z-40 bg-ink-900/30 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />}
 
       <aside
         className={clsx(
-          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-ink-900 text-slate-300 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r glass-dark text-slate-300 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -87,7 +87,7 @@ export default function Sidebar({
                 onClick={() => setOpen(false)}
                 className={clsx(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition",
-                  active ? "bg-white/10 text-white" : "hover:bg-white/5 hover:text-white",
+                  active ? "bg-white/12 text-white shadow-[inset_0_1px_0_0_rgb(255_255_255/0.12)] ring-1 ring-white/10" : "hover:bg-white/5 hover:text-white",
                 )}
               >
                 <Icon className={clsx("h-4.5 w-4.5", active && "text-brand-500")} />
@@ -98,7 +98,7 @@ export default function Sidebar({
         </nav>
 
         <div className="border-t border-white/10 p-4">
-          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
+          <div className="flex items-center gap-3 rounded-xl bg-white/[0.06] p-3 ring-1 ring-white/10">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-series-1 text-sm font-bold text-white">
               {initials(user.name)}
             </div>

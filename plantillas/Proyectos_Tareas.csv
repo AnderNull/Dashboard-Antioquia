@@ -1,0 +1,7 @@
+ID,Proyecto,Requerimiento/Tarea,Modulo_Taxation,Estado,Prioridad,Responsable,Fecha_Inicio,Fecha_Entrega,Bloqueado,Detalle_Bloqueo,Fecha_Creacion
+T-001,TAXATION SMART,Ajustar liquidación de impuesto vehicular vigencia 2026,Impuesto Vehicular,En Progreso,Alta,Carlos Pérez,2026-10-01,2026-11-20,No,,2026-09-28
+T-002,TAXATION SMART,Generar reporte de recaudo diario por entidad bancaria,Reportes,Por Hacer,Media,Laura Restrepo,2026-11-05,2026-11-30,No,,2026-10-15
+T-003,TAXATION SMART,Aplicar nuevas tarifas de estampillas departamentales,Estampillas,En Progreso,Alta,Andrés Gómez,2026-10-10,2026-11-10,Sí,Pendiente confirmación de tarifas 2026 por parte de la Gobernación,2026-10-05
+T-004,TAXATION SMART,Integración con pasarela de pagos PSE,Recaudo y Pagos,En Revisión,Alta,Carlos Pérez,2026-09-15,2026-10-30,No,,2026-09-10
+T-005,TAXATION SMART,Migrar expedientes de cobro coactivo al nuevo modelo,Cobro Coactivo,Por Hacer,Media,Laura Restrepo,2026-11-01,2026-12-15,Sí,Esperando liberación del servicio de consulta del RUNT,2026-10-20
+T-006,TAXATION SMART,Formulario de declaración de impuesto al consumo,Consumo (Licores/Cigarrillos),Completado,Baja,Andrés Gómez,2026-09-01,2026-09-30,No,,2026-08-25
