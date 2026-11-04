@@ -45,7 +45,7 @@ export default function Sidebar({
       {/* Barra superior móvil */}
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between glass-dark border-b px-4 text-white lg:hidden">
         <span className="font-semibold">
-          TAXATION <span className="text-brand-500">SMART</span>
+          TAXATION <span className="text-emerald-300">SMART</span>
         </span>
         <button onClick={() => setOpen(true)} aria-label="Abrir menú" className="rounded p-1.5 hover:bg-white/10">
           <Menu className="h-5 w-5" />
@@ -55,7 +55,7 @@ export default function Sidebar({
 
       <aside
         className={clsx(
-          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r glass-dark text-slate-300 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r glass-dark text-slate-100 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -66,9 +66,9 @@ export default function Sidebar({
             </div>
             <div className="leading-tight">
               <p className="font-semibold text-white">
-                TAXATION <span className="text-brand-500">SMART</span>
+                TAXATION <span className="text-emerald-300">SMART</span>
               </p>
-              <p className="text-xs text-slate-400">Gobernación de Antioquia</p>
+              <p className="text-xs text-slate-200">Gobernación de Antioquia</p>
             </div>
           </div>
           <button onClick={() => setOpen(false)} className="rounded p-1 hover:bg-white/10 lg:hidden" aria-label="Cerrar menú">
@@ -77,7 +77,7 @@ export default function Sidebar({
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-5">
-          <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Gestión del proyecto</p>
+          <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-300">Gestión del proyecto</p>
           {NAV.map(({ href, label, icon: Icon }) => {
             const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
             return (
@@ -90,7 +90,7 @@ export default function Sidebar({
                   active ? "bg-white/12 text-white shadow-[inset_0_1px_0_0_rgb(255_255_255/0.12)] ring-1 ring-white/10" : "hover:bg-white/5 hover:text-white",
                 )}
               >
-                <Icon className={clsx("h-4.5 w-4.5", active && "text-brand-500")} />
+                <Icon className={clsx("h-4.5 w-4.5", active && "text-emerald-300")} />
                 {label}
               </Link>
             );
@@ -104,7 +104,7 @@ export default function Sidebar({
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-white">{user.name}</p>
-              <p className="truncate text-xs text-slate-400">{user.email}</p>
+              <p className="truncate text-xs text-slate-200">{user.email}</p>
               <span
                 className={clsx(
                   "mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ring-1",
@@ -120,7 +120,7 @@ export default function Sidebar({
               <LogOut className="h-4 w-4" /> Cerrar sesión
             </button>
           </form>
-          <p className="mt-3 text-center text-[10px] text-slate-500">Informática y Tributos © {new Date().getFullYear()}</p>
+          <p className="mt-3 text-center text-[10px] text-slate-300">Informática y Tributos © {new Date().getFullYear()}</p>
         </div>
       </aside>
     </>

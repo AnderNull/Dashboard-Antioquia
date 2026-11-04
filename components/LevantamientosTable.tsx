@@ -140,7 +140,7 @@ export default function LevantamientosTable({
           <button
             key={e}
             onClick={() => setEstado((cur) => (cur === e ? "" : e))}
-            className={clsx("card p-4 text-left transition hover:shadow-md", estado === e && "ring-2 ring-brand-500")}
+            className={clsx("card glass-hover p-4 text-left", estado === e && "ring-2 ring-brand-500")}
           >
             <p className="text-xs font-medium text-slate-500">{e}</p>
             <p className="mt-1 text-2xl font-bold tabular-nums text-ink-900">{n}</p>
@@ -150,7 +150,7 @@ export default function LevantamientosTable({
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 z-10 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input className="input pl-9" placeholder="Buscar código, descripción, módulo…" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
         <select className="input sm:w-48" value={estado} onChange={(e) => setEstado(e.target.value)}>
@@ -167,7 +167,7 @@ export default function LevantamientosTable({
 
       <div className="card overflow-x-auto">
         <table className="w-full min-w-[900px] text-sm">
-          <thead className="bg-white/40 text-left text-xs text-slate-500">
+          <thead className="bg-white/20 text-left text-xs text-slate-500">
             <tr>
               {th("Codigo_Requerimiento", "Código")}
               {th("Descripcion_Gobernacion", "Descripción")}

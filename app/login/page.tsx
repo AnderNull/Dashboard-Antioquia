@@ -14,19 +14,19 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </div>
           <div>
             <p className="text-sm font-semibold">Informática y Tributos</p>
-            <p className="text-xs text-slate-400">Gobernación de Antioquia</p>
+            <p className="text-xs text-slate-200">Gobernación de Antioquia</p>
           </div>
         </div>
         <div className="relative max-w-md">
           <h1 className="text-4xl font-bold leading-tight">
-            TAXATION <span className="text-brand-500">SMART</span>
+            TAXATION <span className="text-emerald-300">SMART</span>
           </h1>
-          <p className="mt-4 text-slate-300">
+          <p className="mt-4 text-slate-100">
             Seguimiento de desarrollos, levantamientos de requerimientos y gestión de bloqueos del proyecto tributario
             departamental.
           </p>
         </div>
-        <p className="relative flex items-center gap-2 text-xs text-slate-400">
+        <p className="relative flex items-center gap-2 text-xs text-slate-200">
           <ShieldCheck className="h-4 w-4" /> Acceso restringido a usuarios autorizados
         </p>
       </section>

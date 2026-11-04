@@ -57,7 +57,7 @@ function Overview({ tareas, levantamientos, bloqueos }: Awaited<ReturnType<typeo
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map(({ label, value, hint, icon: Icon, tone }) => (
-          <div key={label} className="card p-5">
+          <div key={label} className="card glass-hover p-5">
             <div className="flex items-start justify-between">
               <p className="text-sm font-medium text-slate-500">{label}</p>
               <span className={`rounded-lg p-2 ${tone}`}>

@@ -194,14 +194,14 @@ export default function KanbanBoard({
       {/* Filtros */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 z-10 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por tarea, responsable o ID…" className="input pl-9" />
         </div>
         <select value={modulo} onChange={(e) => setModulo(e.target.value)} className="input lg:w-56">
           <option value="">Todos los módulos</option>
           {modulos.map((m) => <option key={m}>{m}</option>)}
         </select>
-        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/80 bg-white/55 px-3 py-2 text-sm text-slate-700 backdrop-blur">
+        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/80 bg-white/30 px-3 py-2 text-sm text-slate-700 backdrop-blur-xl">
           <input type="checkbox" checked={soloBloq} onChange={(e) => setSoloBloq(e.target.checked)} className="accent-red-600" />
           <Filter className="h-3.5 w-3.5" /> Solo bloqueadas
         </label>
@@ -223,7 +223,7 @@ export default function KanbanBoard({
               onDragLeave={() => setDragOver(null)}
               onDrop={(e) => { e.preventDefault(); setDragOver(null); const id = e.dataTransfer.getData("text/plain"); if (id) moveTo(id, estado); }}
               className={clsx(
-                "flex min-h-[320px] flex-col rounded-2xl border bg-white/25 p-3 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.6)] backdrop-blur-md transition",
+                "flex min-h-[320px] flex-col rounded-2xl border bg-white/12 p-3 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.6)] backdrop-blur-2xl transition",
                 dragOver === estado ? "border-brand-500/70 bg-brand-50/60" : "border-white/50",
               )}
             >
@@ -231,7 +231,7 @@ export default function KanbanBoard({
                 <h3 className="flex items-center gap-2 text-sm font-semibold text-ink-900">
                   <span className={clsx("h-2.5 w-2.5 rounded-full", accent)} /> {estado}
                 </h3>
-                <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-600">{items.length}</span>
+                <span className="rounded-full bg-white/50 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-600">{items.length}</span>
               </header>
               <div className="flex flex-1 flex-col gap-3">
                 {items.map((t) => {
@@ -244,7 +244,7 @@ export default function KanbanBoard({
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", t.ID)}
                       onClick={() => { setError(null); setDraft({ ...t, Tipo_Bloqueo: log?.Tipo_Bloqueo ?? "Técnico" }); }}
                       className={clsx(
-                        "cursor-pointer rounded-xl border bg-white/70 p-3.5 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.9),0_2px_8px_-2px_rgb(15_27_45/0.08)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/85 hover:shadow-lg",
+                        "cursor-pointer rounded-xl border bg-white/50 p-3.5 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.9),0_2px_8px_-2px_rgb(15_27_45/0.08)] backdrop-blur-2xl transition hover:-translate-y-0.5 hover:bg-white/70 hover:shadow-lg",
                         bloq ? "border-red-300/80 ring-1 ring-red-200/70" : "border-white/80",
                         canEdit && "active:cursor-grabbing",
                       )}
@@ -297,7 +297,7 @@ export default function KanbanBoard({
         </header>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-white/40 text-left text-xs uppercase text-slate-500">
+            <thead className="bg-white/20 text-left text-xs uppercase text-slate-500">
               <tr>
                 <th className="px-5 py-2.5">ID</th>
                 <th className="px-3 py-2.5">Tarea</th>
