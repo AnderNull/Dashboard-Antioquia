@@ -206,12 +206,12 @@ export default function LevantamientosTable({
                 <td className="whitespace-nowrap px-3 py-3 text-xs text-slate-500">{r.Fecha_Levantamiento}</td>
                 <td className="whitespace-nowrap px-3 py-3 text-right">
                   {canEdit && (
-                    <button onClick={() => { setError(null); setDraft({ ...r }); }} className="rounded p-1.5 text-slate-400 hover:bg-white/70 hover:text-slate-700" aria-label="Editar">
+                    <button onClick={() => { setError(null); setDraft({ ...r }); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-white/70 hover:text-slate-700" aria-label="Editar">
                       <Pencil className="h-4 w-4" />
                     </button>
                   )}
                   {canDelete && (
-                    <button onClick={() => remove(r)} className="rounded p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label="Eliminar">
+                    <button onClick={() => remove(r)} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label="Eliminar">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   )}

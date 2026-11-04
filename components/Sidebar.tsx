@@ -43,20 +43,20 @@ export default function Sidebar({
   return (
     <>
       {/* Barra superior móvil */}
-      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between glass-dark border-b px-4 text-white lg:hidden">
+      <header className="fixed inset-x-2 top-2 z-30 flex h-14 items-center justify-between rounded-2xl border glass-dark px-4 text-white lg:hidden">
         <span className="font-semibold">
           TAXATION <span className="text-emerald-300">SMART</span>
         </span>
-        <button onClick={() => setOpen(true)} aria-label="Abrir menú" className="rounded p-1.5 hover:bg-white/10">
+        <button onClick={() => setOpen(true)} aria-label="Abrir menú" className="rounded-lg p-1.5 hover:bg-white/10">
           <Menu className="h-5 w-5" />
         </button>
       </header>
-      {open && <div className="fixed inset-0 z-40 bg-ink-900/30 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed inset-0 z-40 bg-ink-900/30 backdrop-blur-sm animate-fade-in lg:hidden" onClick={() => setOpen(false)} />}
 
       <aside
         className={clsx(
-          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r glass-dark text-slate-100 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
-          open ? "translate-x-0" : "-translate-x-full",
+          "fixed inset-y-2 left-2 z-50 flex w-72 flex-col overflow-hidden rounded-3xl border glass-dark text-slate-100 transition-transform duration-500 lg:sticky lg:top-3 lg:m-3 lg:h-[calc(100vh-1.5rem)] lg:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-[calc(100%+1rem)]",
         )}
       >
         <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-5">
@@ -71,7 +71,7 @@ export default function Sidebar({
               <p className="text-xs text-slate-200">Gobernación de Antioquia</p>
             </div>
           </div>
-          <button onClick={() => setOpen(false)} className="rounded p-1 hover:bg-white/10 lg:hidden" aria-label="Cerrar menú">
+          <button onClick={() => setOpen(false)} className="rounded-lg p-1 hover:bg-white/10 lg:hidden" aria-label="Cerrar menú">
             <X className="h-5 w-5" />
           </button>
         </div>

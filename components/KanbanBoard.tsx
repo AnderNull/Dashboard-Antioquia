@@ -424,7 +424,7 @@ export default function KanbanBoard({
       )}
 
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-lg glass-dark px-4 py-3 text-sm text-white">{toast}</div>
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl border glass-dark animate-modal-in px-4 py-3 text-sm text-white">{toast}</div>
       )}
     </div>
   );

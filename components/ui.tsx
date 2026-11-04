@@ -36,17 +36,17 @@ export function Modal({
   wide?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink-900/25 p-4 backdrop-blur-md sm:items-center" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink-900/25 p-4 backdrop-blur-md animate-fade-in sm:items-center" onMouseDown={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`glass-strong rounded-2xl my-8 w-full ${wide ? "max-w-2xl" : "max-w-lg"} p-6`}
+        className={`glass-strong rounded-3xl animate-modal-in my-8 w-full ${wide ? "max-w-2xl" : "max-w-lg"} p-6`}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink-900">{title}</h2>
-          <button onClick={onClose} className="rounded p-1 text-slate-400 hover:bg-white/70 hover:text-slate-600" aria-label="Cerrar">
+          <button onClick={onClose} className="rounded-lg p-1 text-slate-400 hover:bg-white/70 hover:text-slate-600" aria-label="Cerrar">
             ✕
           </button>
         </div>
