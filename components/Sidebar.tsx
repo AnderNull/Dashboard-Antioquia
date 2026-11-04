@@ -1,0 +1,128 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import clsx from "clsx";
+import { BrainCircuit, ClipboardList, KanbanSquare, Landmark, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
+
+const NAV = [
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/tasks", label: "Kanban y Bloqueos", icon: KanbanSquare },
+  { href: "/dashboard/levantamientos", label: "Levantamientos", icon: ClipboardList },
+  { href: "/dashboard/analytics", label: "Analítica IA", icon: BrainCircuit },
+];
+
+const ROLE_STYLE: Record<string, string> = {
+  Admin: "bg-amber-400/15 text-amber-300 ring-amber-400/30",
+  Desarrollador: "bg-sky-400/15 text-sky-300 ring-sky-400/30",
+  Gobernacion: "bg-emerald-400/15 text-emerald-300 ring-emerald-400/30",
+};
+
+const ROLE_LABEL: Record<string, string> = { Gobernacion: "Gobernación" };
+
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]!.toUpperCase())
+    .join("");
+}
+
+export default function Sidebar({
+  user,
+  logoutAction,
+}: {
+  user: { name: string; email: string; role: string };
+  logoutAction: () => Promise<void>;
+}) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      {/* Barra superior móvil */}
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between bg-ink-900 px-4 text-white lg:hidden">
+        <span className="font-semibold">
+          TAXATION <span className="text-brand-500">SMART</span>
+        </span>
+        <button onClick={() => setOpen(true)} aria-label="Abrir menú" className="rounded p-1.5 hover:bg-white/10">
+          <Menu className="h-5 w-5" />
+        </button>
+      </header>
+      {open && <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setOpen(false)} />}
+
+      <aside
+        className={clsx(
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-ink-900 text-slate-300 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
+        <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white">
+              <Landmark className="h-5 w-5" />
+            </div>
+            <div className="leading-tight">
+              <p className="font-semibold text-white">
+                TAXATION <span className="text-brand-500">SMART</span>
+              </p>
+              <p className="text-xs text-slate-400">Gobernación de Antioquia</p>
+            </div>
+          </div>
+          <button onClick={() => setOpen(false)} className="rounded p-1 hover:bg-white/10 lg:hidden" aria-label="Cerrar menú">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <nav className="flex-1 space-y-1 px-3 py-5">
+          <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Gestión del proyecto</p>
+          {NAV.map(({ href, label, icon: Icon }) => {
+            const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={clsx(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition",
+                  active ? "bg-white/10 text-white" : "hover:bg-white/5 hover:text-white",
+                )}
+              >
+                <Icon className={clsx("h-4.5 w-4.5", active && "text-brand-500")} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-white/10 p-4">
+          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-series-1 text-sm font-bold text-white">
+              {initials(user.name)}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-white">{user.name}</p>
+              <p className="truncate text-xs text-slate-400">{user.email}</p>
+              <span
+                className={clsx(
+                  "mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ring-1",
+                  ROLE_STYLE[user.role] ?? "bg-white/10 text-slate-300 ring-white/20",
+                )}
+              >
+                {ROLE_LABEL[user.role] ?? user.role}
+              </span>
+            </div>
+          </div>
+          <form action={logoutAction} className="mt-3">
+            <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-medium hover:bg-red-500/10 hover:text-red-300">
+              <LogOut className="h-4 w-4" /> Cerrar sesión
+            </button>
+          </form>
+          <p className="mt-3 text-center text-[10px] text-slate-500">Informática y Tributos © {new Date().getFullYear()}</p>
+        </div>
+      </aside>
+    </>
+  );
+}

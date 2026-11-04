@@ -1,0 +1,79 @@
+// Tipos de dominio — reflejan 1:1 las columnas de cada pestaña de Google Sheets.
+
+export const ROLES = ["Admin", "Desarrollador", "Gobernacion"] as const;
+export type Rol = (typeof ROLES)[number];
+
+export const ESTADOS_TAREA = ["Por Hacer", "En Progreso", "En Revisión", "Completado"] as const;
+export type EstadoTarea = (typeof ESTADOS_TAREA)[number];
+
+export const PRIORIDADES = ["Alta", "Media", "Baja"] as const;
+export type Prioridad = (typeof PRIORIDADES)[number];
+
+export const TIPOS_BLOQUEO = ["Técnico", "Cliente/Gobernación", "Funcional", "Dependencia"] as const;
+export type TipoBloqueo = (typeof TIPOS_BLOQUEO)[number];
+
+export const ESTADOS_BLOQUEO = ["Abierto", "En Gestión", "Resuelto"] as const;
+export type EstadoBloqueo = (typeof ESTADOS_BLOQUEO)[number];
+
+export const ESTADOS_APROBACION = ["Pendiente", "En Revisión", "Aprobado", "Rechazado"] as const;
+export type EstadoAprobacion = (typeof ESTADOS_APROBACION)[number];
+
+export const IMPACTOS = ["Alto", "Medio", "Bajo"] as const;
+
+export interface Usuario {
+  ID: string;
+  Nombre: string;
+  Email: string;
+  PasswordHash: string;
+  Rol: Rol;
+  Estado: "Activo" | "Inactivo";
+}
+
+export interface Tarea {
+  ID: string;
+  Proyecto: string;
+  "Requerimiento/Tarea": string;
+  Modulo_Taxation: string;
+  Estado: EstadoTarea;
+  Prioridad: Prioridad;
+  Responsable: string;
+  Fecha_Inicio: string;
+  Fecha_Entrega: string;
+  Bloqueado: "Sí" | "No";
+  Detalle_Bloqueo: string;
+  Fecha_Creacion: string;
+}
+
+export interface Levantamiento {
+  ID: string;
+  Codigo_Requerimiento: string;
+  Descripcion_Gobernacion: string;
+  Modulo_Afectado: string;
+  Impacto_Tributario: string;
+  Estado_Aprobacion: string;
+  Fecha_Levantamiento: string;
+}
+
+export interface Bloqueo {
+  ID: string;
+  Tarea_ID: string;
+  Tipo_Bloqueo: TipoBloqueo;
+  Descripcion_Bloqueo: string;
+  Fecha_Registro: string;
+  Fecha_Resolucion: string;
+  Estado: EstadoBloqueo;
+}
+
+/** Módulos sugeridos de TAXATION SMART (el campo admite texto libre). */
+export const MODULOS_TAXATION = [
+  "Impuesto Vehicular",
+  "Registro",
+  "Estampillas",
+  "Consumo (Licores/Cigarrillos)",
+  "Fiscalización",
+  "Cobro Coactivo",
+  "Recaudo y Pagos",
+  "Liquidación",
+  "Reportes",
+  "Integraciones",
+];

@@ -1,0 +1,47 @@
+import { NextResponse } from "next/server";
+import { PERMISOS, handleError, requireRole } from "@/lib/api";
+import { SHEETS, deleteRow, updateRow } from "@/lib/googleSheets";
+import { syncBloqueo } from "@/lib/bloqueos";
+import { tareaPatchSchema, zodMessage } from "@/lib/schemas";
+
+type Ctx = { params: Promise<{ id: string }> };
+
+export async function PATCH(req: Request, { params }: Ctx) {
+  const s = await requireRole(PERMISOS.editarTareas);
+  if (s instanceof NextResponse) return s;
+  try {
+    const { id } = await params;
+    const parsed = tareaPatchSchema.safeParse(await req.json());
+    if (!parsed.success) return NextResponse.json({ error: zodMessage(parsed.error) }, { status: 400 });
+    const { Tipo_Bloqueo, ...patch } = parsed.data;
+    if (patch.Bloqueado === "No") patch.Detalle_Bloqueo = "";
+
+    const updated = await updateRow(SHEETS.tareas, id, patch as Record<string, string>);
+    if (!updated) return NextResponse.json({ error: "Tarea no encontrada" }, { status: 404 });
+
+    if (patch.Bloqueado !== undefined || patch.Detalle_Bloqueo !== undefined || Tipo_Bloqueo) {
+      await syncBloqueo({
+        tareaId: id,
+        bloqueado: updated.Bloqueado === "Sí",
+        descripcion: updated.Detalle_Bloqueo,
+        tipo: Tipo_Bloqueo,
+      });
+    }
+    return NextResponse.json(updated);
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function DELETE(_req: Request, { params }: Ctx) {
+  const s = await requireRole(PERMISOS.eliminarTareas);
+  if (s instanceof NextResponse) return s;
+  try {
+    const { id } = await params;
+    const ok = await deleteRow(SHEETS.tareas, id);
+    if (!ok) return NextResponse.json({ error: "Tarea no encontrada" }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return handleError(e);
+  }
+}
