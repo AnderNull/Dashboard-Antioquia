@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { Activity, BrainCircuit, ClipboardList, KanbanSquare, Landmark, LayoutDashboard, LogOut, Menu, UserCog, X } from "lucide-react";
+import { Activity, BrainCircuit, ClipboardList, KanbanSquare, Landmark, LayoutDashboard, Loader2, LogOut, Menu, UserCog, X } from "lucide-react";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -41,9 +41,19 @@ export default function Sidebar({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // Sección elegida: se resalta al instante, antes de que termine de cargar
+  const [pendiente, setPendiente] = useState<string | null>(null);
+  useEffect(() => setPendiente(null), [pathname]);
+  const actual = pendiente ?? pathname;
 
   return (
     <>
+      {/* Barra de progreso mientras carga la nueva sección */}
+      {pendiente && (
+        <div className="fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden" role="progressbar" aria-label="Cargando sección">
+          <div className="h-full w-1/3 animate-[nav-progress_1s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-brand-500 via-series-1 to-brand-500" />
+        </div>
+      )}
       {/* Barra superior móvil */}
       <header className="fixed inset-x-2 top-2 z-30 flex h-14 items-center justify-between rounded-2xl border glass-dark px-4 text-white lg:hidden">
         <span className="font-semibold">
@@ -57,7 +67,7 @@ export default function Sidebar({
 
       <aside
         className={clsx(
-          "fixed inset-y-2 left-2 z-50 flex w-72 flex-col overflow-hidden rounded-3xl border glass-dark text-slate-100 transition-transform duration-500 lg:sticky lg:top-3 lg:m-3 lg:h-[calc(100vh-1.5rem)] lg:translate-x-0",
+          "fixed inset-y-2 left-2 z-50 flex w-72 flex-col overflow-hidden rounded-3xl border glass-dark text-slate-100 transition-transform duration-300 lg:sticky lg:top-3 lg:m-3 lg:h-[calc(100vh-1.5rem)] lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-[calc(100%+1rem)]",
         )}
       >
@@ -86,19 +96,24 @@ export default function Sidebar({
             <div key={titulo} className="space-y-1 pb-4">
               <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-300">{titulo}</p>
               {items.map(({ href, label, icon: Icon }) => {
-                const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+                const active = href === "/dashboard" ? actual === href : actual.startsWith(href);
                 return (
                   <Link
                     key={href}
                     href={href}
-                    onClick={() => setOpen(false)}
+                    prefetch
+                    onClick={(e) => {
+                      setOpen(false);
+                      if (!e.metaKey && !e.ctrlKey && !e.shiftKey && href !== pathname) setPendiente(href);
+                    }}
                     className={clsx(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition",
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-100 active:scale-[0.98]",
                       active ? "bg-white/12 text-white shadow-[inset_0_1px_0_0_rgb(255_255_255/0.12)] ring-1 ring-white/10" : "hover:bg-white/5 hover:text-white",
                     )}
                   >
                     <Icon className={clsx("h-4.5 w-4.5", active && "text-emerald-300")} />
                     {label}
+                    {pendiente === href && <Loader2 className="ml-auto h-3.5 w-3.5 animate-spin text-emerald-300" aria-hidden />}
                   </Link>
                 );
               })}

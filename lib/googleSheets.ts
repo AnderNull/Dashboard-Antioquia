@@ -76,7 +76,29 @@ function sanitizeCell(value: unknown): string {
 /** Fila leída + su número real en la hoja (base 1), para no desfasarse si hay filas vacías. */
 type SheetRow = { row: Row; rowNumber: number };
 
-async function readTable(sheet: SheetName): Promise<{ headers: string[]; rows: Row[]; entries: SheetRow[] }> {
+type Table = { headers: string[]; rows: Row[]; entries: SheetRow[] };
+
+// Caché corta de lecturas: cambiar de sección no vuelve a consultar Google Sheets
+// si los datos tienen menos de READ_TTL_MS. Las escrituras leen siempre en fresco
+// (para ubicar la fila correcta) e invalidan la caché de esa pestaña.
+const READ_TTL_MS = 15_000;
+const readCache = new Map<SheetName, { at: number; data: Promise<Table> }>();
+
+function invalidar(sheet: SheetName) {
+  readCache.delete(sheet);
+  if (sheet === SHEETS.usuarios) usuariosCache = null;
+}
+
+async function readTable(sheet: SheetName, fresh = false): Promise<Table> {
+  const hit = readCache.get(sheet);
+  if (!fresh && hit && Date.now() - hit.at < READ_TTL_MS) return hit.data;
+  const data = fetchTable(sheet);
+  readCache.set(sheet, { at: Date.now(), data });
+  data.catch(() => readCache.delete(sheet)); // no guardar errores en caché
+  return data;
+}
+
+async function fetchTable(sheet: SheetName): Promise<Table> {
   const { spreadsheetId } = getConfig();
   const res = await sheets().spreadsheets.values.get({
     spreadsheetId,
@@ -127,7 +149,7 @@ export async function listRows<T>(sheet: SheetName): Promise<T[]> {
 
 export async function appendRow(sheet: SheetName, data: Row): Promise<void> {
   const { spreadsheetId } = getConfig();
-  const { headers } = await readTable(sheet);
+  const { headers } = await readTable(sheet, true);
   await sheets().spreadsheets.values.append({
     spreadsheetId,
     range: a1(sheet, "A1"),
@@ -135,12 +157,13 @@ export async function appendRow(sheet: SheetName, data: Row): Promise<void> {
     insertDataOption: "INSERT_ROWS",
     requestBody: { values: [headers.map((h) => sanitizeCell(data[h]))] },
   });
+  invalidar(sheet);
 }
 
 /** Actualiza (merge) la fila cuyo ID coincida. Devuelve la fila resultante o null. */
 export async function updateRow(sheet: SheetName, id: string, patch: Row): Promise<Row | null> {
   const { spreadsheetId } = getConfig();
-  const { headers, entries } = await readTable(sheet);
+  const { headers, entries } = await readTable(sheet, true);
   const found = entries.find((e) => e.row.ID === id);
   if (!found) return null;
   const merged: Row = { ...found.row, ...patch, ID: id };
@@ -151,12 +174,13 @@ export async function updateRow(sheet: SheetName, id: string, patch: Row): Promi
     valueInputOption: "RAW",
     requestBody: { values: [headers.map((h) => sanitizeCell(merged[h]))] },
   });
+  invalidar(sheet);
   return merged;
 }
 
 export async function deleteRow(sheet: SheetName, id: string): Promise<boolean> {
   const { spreadsheetId } = getConfig();
-  const { entries } = await readTable(sheet);
+  const { entries } = await readTable(sheet, true);
   const found = entries.find((e) => e.row.ID === id);
   if (!found) return false;
   const sheetId = await getSheetId(sheet);
@@ -170,6 +194,7 @@ export async function deleteRow(sheet: SheetName, id: string): Promise<boolean> 
       ],
     },
   });
+  invalidar(sheet);
   return true;
 }
 
@@ -219,6 +244,7 @@ export async function ensureHeaders(sheet: SheetName): Promise<void> {
     valueInputOption: "RAW",
     requestBody: { values: [faltantes] },
   });
+  invalidar(sheet);
 }
 
 // ── Accesos tipados por dominio ─────────────────────────────
