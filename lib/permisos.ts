@@ -10,6 +10,7 @@ export const CATALOGO_PERMISOS = [
   { key: "levantamientos.eliminar", grupo: "Levantamientos", label: "Eliminar levantamientos", desc: "Borrar levantamientos de la hoja." },
   { key: "analisis.ia", grupo: "Analítica", label: "Generar análisis con IA", desc: "Ejecutar el diagnóstico del proyecto con Claude (consume créditos de la API)." },
   { key: "usuarios.administrar", grupo: "Administración", label: "Administrar usuarios y permisos", desc: "Crear, editar, desactivar y eliminar usuarios y definir sus permisos." },
+  { key: "configuracion.administrar", grupo: "Administración", label: "Administrar configuración", desc: "Gestionar los catálogos: módulos Taxation, responsables e impacto tributario." },
 ] as const;
 
 export type Permiso = (typeof CATALOGO_PERMISOS)[number]["key"];

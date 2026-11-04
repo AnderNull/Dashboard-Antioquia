@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import { ArrowUpDown, Download, Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { Modal } from "./ui";
-import { ESTADOS_APROBACION, IMPACTOS, MODULOS_TAXATION, type Levantamiento } from "@/lib/types";
+import { ESTADOS_APROBACION, type Levantamiento } from "@/lib/types";
+import { opcionesCon, type Catalogos } from "@/lib/catalogos";
 
 const ESTADO_STYLE: Record<string, string> = {
   Pendiente: "bg-amber-50 text-amber-700 ring-amber-200",
@@ -43,11 +44,13 @@ export default function LevantamientosTable({
   canCreate,
   canEdit,
   canDelete,
+  catalogos,
 }: {
   initial: Levantamiento[];
   canCreate: boolean;
   canEdit: boolean;
   canDelete: boolean;
+  catalogos: Catalogos;
 }) {
   const router = useRouter();
   const [rows, setRows] = useState(initial);
@@ -239,13 +242,21 @@ export default function LevantamientosTable({
             </div>
             <div>
               <label className="label">Módulo afectado *</label>
-              <input list="mods-lev" className="input" value={draft.Modulo_Afectado ?? ""} onChange={(e) => set("Modulo_Afectado", e.target.value)} />
-              <datalist id="mods-lev">{MODULOS_TAXATION.map((m) => <option key={m} value={m} />)}</datalist>
+              <select className="input" value={draft.Modulo_Afectado ?? ""} onChange={(e) => set("Modulo_Afectado", e.target.value)}>
+                <option value="" disabled>Selecciona un módulo…</option>
+                {opcionesCon(catalogos.modulo, draft.Modulo_Afectado).map((m) => (
+                  <option key={m} value={m}>{catalogos.modulo.includes(m) ? m : `${m} (fuera de la lista)`}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="label">Impacto tributario</label>
-              <input list="impactos" className="input" value={draft.Impacto_Tributario ?? ""} onChange={(e) => set("Impacto_Tributario", e.target.value)} />
-              <datalist id="impactos">{IMPACTOS.map((m) => <option key={m} value={m} />)}</datalist>
+              <select className="input" value={draft.Impacto_Tributario ?? ""} onChange={(e) => set("Impacto_Tributario", e.target.value)}>
+                <option value="">Sin definir</option>
+                {opcionesCon(catalogos.impacto, draft.Impacto_Tributario).map((m) => (
+                  <option key={m} value={m}>{catalogos.impacto.includes(m) ? m : `${m} (fuera de la lista)`}</option>
+                ))}
+              </select>
             </div>
             {canEdit && (
               <div>

@@ -1,5 +1,6 @@
 import { google, type sheets_v4 } from "googleapis";
 import type { Bloqueo, Levantamiento, Tarea, Usuario } from "./types";
+import { construirCatalogos, type Catalogos, type ItemCatalogo } from "./catalogos";
 
 /**
  * Conector de Google Sheets (API v4) vía Service Account.
@@ -14,6 +15,7 @@ export const SHEETS = {
   tareas: "Proyectos_Tareas",
   levantamientos: "Levantamientos",
   bloqueos: "Bloqueos_Log",
+  config: "Configuracion",
 } as const;
 
 export type SheetName = (typeof SHEETS)[keyof typeof SHEETS];
@@ -31,6 +33,7 @@ export const HEADERS: Record<SheetName, string[]> = {
   Bloqueos_Log: [
     "ID", "Tarea_ID", "Tipo_Bloqueo", "Descripcion_Bloqueo", "Fecha_Registro", "Fecha_Resolucion", "Estado",
   ],
+  Configuracion: ["ID", "Tipo", "Valor", "Descripcion", "Orden", "Estado"],
 };
 
 type Row = Record<string, string>;
@@ -253,6 +256,36 @@ export const getUsuarios = () => listRows<Usuario>(SHEETS.usuarios);
 export const getTareas = () => listRows<Tarea>(SHEETS.tareas);
 export const getLevantamientos = () => listRows<Levantamiento>(SHEETS.levantamientos);
 export const getBloqueos = () => listRows<Bloqueo>(SHEETS.bloqueos);
+
+/** Crea la pestaña si no existe y asegura sus encabezados. */
+export async function ensureSheet(sheet: SheetName): Promise<void> {
+  const { spreadsheetId } = getConfig();
+  const meta = await sheets().spreadsheets.get({ spreadsheetId, fields: "sheets.properties.title" });
+  const existe = (meta.data.sheets ?? []).some((s) => s.properties?.title === sheet);
+  if (!existe) {
+    await sheets().spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: { requests: [{ addSheet: { properties: { title: sheet } } }] },
+    });
+    sheetIdCache.clear();
+  }
+  await ensureHeaders(sheet);
+}
+
+/** Elementos de la pestaña Configuracion. La crea automáticamente la primera vez. */
+export async function getItemsCatalogo(): Promise<ItemCatalogo[]> {
+  try {
+    return await listRows<ItemCatalogo>(SHEETS.config);
+  } catch (e) {
+    if (e instanceof SheetsConfigError) throw e;
+    await ensureSheet(SHEETS.config);
+    return [];
+  }
+}
+
+export async function getCatalogos(): Promise<Catalogos> {
+  return construirCatalogos(await getItemsCatalogo());
+}
 
 export async function findUsuarioByEmail(email: string): Promise<Usuario | null> {
   const usuarios = await getUsuarios();

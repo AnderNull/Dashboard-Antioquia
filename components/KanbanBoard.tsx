@@ -6,10 +6,10 @@ import clsx from "clsx";
 import { AlertOctagon, CalendarDays, Columns3, Filter, GanttChart, Loader2, Lock, Plus, Search, Trash2, User } from "lucide-react";
 import { Modal } from "./ui";
 import GanttTimeline from "./GanttTimeline";
+import { opcionesCon, type Catalogos } from "@/lib/catalogos";
 import {
   ESTADOS_BLOQUEO,
   ESTADOS_TAREA,
-  MODULOS_TAXATION,
   PRIORIDADES,
   TIPOS_BLOQUEO,
   type Bloqueo,
@@ -64,12 +64,14 @@ export default function KanbanBoard({
   canEdit,
   canDelete,
   canBloqueos,
+  catalogos,
 }: {
   initialTareas: Tarea[];
   initialBloqueos: Bloqueo[];
   canEdit: boolean;
   canDelete: boolean;
   canBloqueos: boolean;
+  catalogos: Catalogos;
 }) {
   const router = useRouter();
   const [tareas, setTareas] = useState(initialTareas);
@@ -117,8 +119,8 @@ export default function KanbanBoard({
   }, [bloqueos]);
 
   const modulos = useMemo(
-    () => [...new Set([...MODULOS_TAXATION, ...tareas.map((t) => t.Modulo_Taxation).filter(Boolean)])],
-    [tareas],
+    () => [...new Set([...catalogos.modulo, ...tareas.map((t) => t.Modulo_Taxation).filter(Boolean)])],
+    [tareas, catalogos.modulo],
   );
 
   const visibles = tareas.filter((t) => {
@@ -400,12 +402,24 @@ export default function KanbanBoard({
             </div>
             <div>
               <label className="label">Módulo Taxation *</label>
-              <input list="modulos" className="input" value={draft.Modulo_Taxation ?? ""} onChange={(e) => set("Modulo_Taxation", e.target.value)} />
-              <datalist id="modulos">{modulos.map((m) => <option key={m} value={m} />)}</datalist>
+              <select className="input" value={draft.Modulo_Taxation ?? ""} onChange={(e) => set("Modulo_Taxation", e.target.value)}>
+                <option value="" disabled>Selecciona un módulo…</option>
+                {opcionesCon(catalogos.modulo, draft.Modulo_Taxation).map((m) => (
+                  <option key={m} value={m}>{catalogos.modulo.includes(m) ? m : `${m} (fuera de la lista)`}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="label">Responsable</label>
-              <input className="input" value={draft.Responsable ?? ""} onChange={(e) => set("Responsable", e.target.value)} />
+              <select className="input" value={draft.Responsable ?? ""} onChange={(e) => set("Responsable", e.target.value)}>
+                <option value="">Sin asignar</option>
+                {opcionesCon(catalogos.responsable, draft.Responsable).map((r) => (
+                  <option key={r} value={r}>{catalogos.responsable.includes(r) ? r : `${r} (fuera de la lista)`}</option>
+                ))}
+              </select>
+              {catalogos.responsable.length === 0 && (
+                <p className="mt-1 text-[11px] text-slate-500">Agrega responsables en Administración → Configuración.</p>
+              )}
             </div>
             <div>
               <label className="label">Estado</label>

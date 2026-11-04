@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { getBloqueos, getTareas } from "@/lib/googleSheets";
+import { getBloqueos, getCatalogos, getTareas } from "@/lib/googleSheets";
 import { safeLoad } from "@/lib/load";
 import { PERMISOS, can } from "@/lib/api";
 import { DataError, PageHeader } from "@/components/ui";
@@ -8,8 +8,8 @@ import KanbanBoard from "@/components/KanbanBoard";
 export default async function TasksPage() {
   const session = await auth();
   const res = await safeLoad(async () => {
-    const [tareas, bloqueos] = await Promise.all([getTareas(), getBloqueos()]);
-    return { tareas, bloqueos };
+    const [tareas, bloqueos, catalogos] = await Promise.all([getTareas(), getBloqueos(), getCatalogos()]);
+    return { tareas, bloqueos, catalogos };
   });
 
   return (
@@ -24,6 +24,7 @@ export default async function TasksPage() {
           canEdit={can(session, PERMISOS.editarTareas)}
           canDelete={can(session, PERMISOS.eliminarTareas)}
           canBloqueos={can(session, PERMISOS.gestionarBloqueos)}
+          catalogos={res.data.catalogos}
         />
       )}
     </>

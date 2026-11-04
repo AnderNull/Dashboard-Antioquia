@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { Activity, BrainCircuit, ClipboardList, KanbanSquare, LayoutDashboard, Loader2, LogOut, Menu, UserCog, X } from "lucide-react";
+import { Activity, BrainCircuit, ClipboardList, KanbanSquare, LayoutDashboard, Loader2, LogOut, Menu, Settings2, UserCog, X } from "lucide-react";
 import { TaxationLogo } from "./Brand";
 
 const NAV = [
@@ -14,7 +14,10 @@ const NAV = [
   { href: "/dashboard/levantamientos", label: "Levantamientos", icon: ClipboardList },
   { href: "/dashboard/analytics", label: "Analítica IA", icon: BrainCircuit },
 ];
-const NAV_ADMIN = [{ href: "/dashboard/admin", label: "Usuarios y permisos", icon: UserCog }];
+const NAV_ADMIN = [
+  { href: "/dashboard/admin", label: "Usuarios y permisos", icon: UserCog, permiso: "usuarios.administrar" },
+  { href: "/dashboard/configuracion", label: "Configuración", icon: Settings2, permiso: "configuracion.administrar" },
+];
 
 const ROLE_STYLE: Record<string, string> = {
   Admin: "bg-amber-50/90 text-amber-800 ring-amber-300/70",
@@ -87,7 +90,9 @@ export default function Sidebar({
         <nav className="flex-1 space-y-1 px-3 py-5">
           {[
             { titulo: "Gestión del proyecto", items: NAV },
-            ...(user.permisos.includes("usuarios.administrar") ? [{ titulo: "Administración", items: NAV_ADMIN }] : []),
+            ...((admin) => (admin.length ? [{ titulo: "Administración", items: admin }] : []))(
+              NAV_ADMIN.filter((n) => user.permisos.includes(n.permiso)),
+            ),
           ].map(({ titulo, items }) => (
             <div key={titulo} className="space-y-1 pb-4">
               <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{titulo}</p>

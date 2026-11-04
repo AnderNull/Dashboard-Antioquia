@@ -14,6 +14,7 @@ export const PERMISOS = {
   eliminarLevantamientos: "levantamientos.eliminar",
   analisisIA: "analisis.ia",
   administrarUsuarios: "usuarios.administrar",
+  administrarConfiguracion: "configuracion.administrar",
 } as const satisfies Record<string, Permiso>;
 
 export function can(session: Session | null, permiso: Permiso) {

@@ -222,6 +222,22 @@ en el Kanban, y cierra el registro cuando la desbloqueas.
 El `Tipo_Bloqueo` es clave para la analítica de IA: `Técnico` y `Dependencia` se atribuyen al equipo;
 `Cliente/Gobernación` a la Gobernación; `Funcional` se evalúa según la descripción.
 
+### 6.5 `Configuracion` — catálogos de los desplegables
+
+La app la crea sola la primera vez que se abre **Administración → Configuración**. Se recomienda
+gestionarla desde ese panel (requiere el permiso «Administrar configuración»).
+
+| Columna | Valores | Ejemplo |
+|---|---|---|
+| `ID` | Código único (lo asigna la app) | `C-MX12AB3` |
+| `Tipo` | `modulo` · `responsable` · `impacto` | `responsable` |
+| `Valor` | Texto que aparece en el desplegable | `Juan Diego Ríos` |
+| `Descripcion` | Opcional (cargo, área, criterio…) | `Desarrollador backend` |
+| `Orden` | Número para ordenar la lista | `1` |
+| `Estado` | `Activo` · `Inactivo` (oculto en los desplegables) | `Activo` |
+
+Si un tipo no tiene filas, la app usa los valores por defecto (módulos sugeridos e impactos Alto/Medio/Bajo).
+
 ### Nota importante sobre las fechas
 
 Google Sheets convierte automáticamente lo que escribes a mano como fecha según el idioma de la hoja
