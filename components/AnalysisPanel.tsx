@@ -109,7 +109,7 @@ export default function AnalysisPanel({ canRun }: { canRun: boolean }) {
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Salud */}
             <section className="card p-5 lg:col-span-2">
-              <h3 className="mb-3 flex items-center gap-2 font-semibold text-ink-900"><Activity className="h-4 w-4 text-brand-600" /> Salud del proyecto</h3>
+              <h3 className="mb-3 flex items-center gap-2 font-semibold text-ink-900"><Activity className="h-4 w-4 text-gov-600" /> Salud del proyecto</h3>
               <div className="flex flex-wrap items-center gap-4">
                 <span className={clsx("rounded-full px-3 py-1 text-sm font-semibold ring-1", salud.ring)}>{salud.label}</span>
                 <div className="flex-1">

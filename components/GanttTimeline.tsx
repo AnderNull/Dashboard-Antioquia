@@ -43,7 +43,7 @@ const ESTADO: Record<EstadoTarea, { track: string; fill: string; dot: string }> 
   "Por Hacer": { track: "bg-slate-400/25 ring-slate-400/60", fill: "bg-slate-500/80", dot: "bg-slate-400" },
   "En Progreso": { track: "bg-sky-400/25 ring-sky-500/60", fill: "bg-sky-500", dot: "bg-sky-500" },
   "En Revisión": { track: "bg-violet-400/25 ring-violet-500/60", fill: "bg-violet-500", dot: "bg-violet-500" },
-  Completado: { track: "bg-emerald-400/25 ring-emerald-600/60", fill: "bg-brand-600", dot: "bg-brand-600" },
+  Completado: { track: "bg-emerald-400/25 ring-emerald-600/60", fill: "bg-gov-600", dot: "bg-gov-600" },
 };
 const AVANCE: Record<string, number> = { "Por Hacer": 0, "En Progreso": 50, "En Revisión": 80, Completado: 100 };
 const STRIPES = "repeating-linear-gradient(45deg, rgb(220 38 38 / 0.38) 0 5px, transparent 5px 10px)";
@@ -349,7 +349,7 @@ export default function GanttTimeline({ tareas, onSelect }: { tareas: Tarea[]; o
                       {/* Barra resumen estilo MS Project */}
                       <div className="absolute top-[15px] h-2.5" style={{ left: l, width: w }} title={`${g.modulo}: ${fechaCorta(g.s)} → ${fechaCorta(g.e)} · ${g.pct}%`}>
                         <div className="h-1.5 w-full overflow-hidden rounded-sm bg-ink-800/80">
-                          <div className="h-full bg-brand-500" style={{ width: `${g.pct}%` }} />
+                          <div className="h-full bg-gov-500" style={{ width: `${g.pct}%` }} />
                         </div>
                         <span className="absolute -bottom-0.5 left-0 h-0 w-0 border-x-[5px] border-t-[6px] border-x-transparent border-t-ink-800/80" />
                         <span className="absolute -bottom-0.5 right-0 h-0 w-0 border-x-[5px] border-t-[6px] border-x-transparent border-t-ink-800/80" />

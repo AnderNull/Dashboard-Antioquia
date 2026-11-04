@@ -48,7 +48,7 @@ function Overview({ tareas, levantamientos, bloqueos }: Awaited<ReturnType<typeo
 
   const kpis = [
     { label: "Total requerimientos", value: total, hint: `${levantamientos.length} levantamientos registrados`, icon: ClipboardList, tone: "text-series-1 bg-series-1/10" },
-    { label: "Tareas completadas", value: completadas, hint: `${pct}% de avance global`, icon: CheckCircle2, tone: "text-brand-600 bg-brand-50" },
+    { label: "Tareas completadas", value: completadas, hint: `${pct}% de avance global`, icon: CheckCircle2, tone: "text-gov-600 bg-gov-50" },
     { label: "En curso", value: enCurso, hint: "En progreso + en revisión", icon: Timer, tone: "text-amber-600 bg-amber-50" },
     { label: "Bloqueos activos", value: bloqueosActivos, hint: "Abiertos o en gestión", icon: AlertOctagon, tone: "text-red-600 bg-red-50" },
   ];
@@ -76,7 +76,7 @@ function Overview({ tareas, levantamientos, bloqueos }: Awaited<ReturnType<typeo
           <span className="tabular-nums text-slate-500">{completadas} / {total} tareas · {pct}%</span>
         </div>
         <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/60 ring-1 ring-white/70">
-          <div className="h-full rounded-full bg-brand-600 transition-all" style={{ width: `${pct}%` }} />
+          <div className="h-full rounded-full bg-linear-to-r from-brand-500 via-celeste-400 to-gov-500 transition-all" style={{ width: `${pct}%` }} />
         </div>
       </div>
 

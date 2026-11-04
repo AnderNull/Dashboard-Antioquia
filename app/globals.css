@@ -3,15 +3,25 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Marca: verde Antioquia + azul institucional */
-  --color-brand-50: #ecfdf3;
-  --color-brand-100: #d1fadf;
-  --color-brand-500: #12a150;
-  --color-brand-600: #0b8a43;
-  --color-brand-700: #087035;
-  --color-ink-900: #0f1b2d;
-  --color-ink-800: #16263d;
-  --color-ink-700: #22354f;
+  /*
+   * Paleta institucional combinada:
+   *  - Taxation Smart: índigo profundo (texto "TAX"), azul real y celeste del símbolo.
+   *  - Gobernación de Antioquia: verde de la línea institucional y dorado del escudo.
+   */
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #dbe5fe;
+  --color-brand-300: #8fb0f5;
+  --color-brand-500: #2f6fe4;
+  --color-brand-600: #2453c4;
+  --color-brand-700: #1e2a78;
+  --color-celeste-400: #4cb8ea;
+  --color-gov-50: #e9f8ef;
+  --color-gov-500: #13a052;
+  --color-gov-600: #0b8443;
+  --color-gold-400: #f4c430;
+  --color-ink-900: #171b52;
+  --color-ink-800: #232873;
+  --color-ink-700: #343b93;
 
   /* Series de gráficos (paleta categórica validada, orden fijo) */
   --color-series-1: #2a78d6;
@@ -42,34 +52,61 @@
   --grid: #e7e6e2;
 
   /* ── Crystal clear (glassmorphism) ── */
-  --glass-bg: rgb(255 255 255 / 0.45);
-  --glass-bg-strong: rgb(255 255 255 / 0.58);
-  --glass-border: rgb(255 255 255 / 0.55);
+  --glass-bg: rgb(255 255 255 / 0.34);
+  --glass-bg-strong: rgb(255 255 255 / 0.66);
+  --glass-border: rgb(255 255 255 / 0.75);
   --glass-highlight: inset 0 1px 0 0 rgb(255 255 255 / 0.85);
-  --glass-shadow: 0 12px 40px -10px rgb(15 27 45 / 0.22), 0 2px 8px -2px rgb(15 27 45 / 0.08);
-  --glass-blur: 28px;
+  --glass-shadow: 0 18px 40px -16px rgb(30 40 120 / 0.28), 0 3px 10px -3px rgb(30 40 120 / 0.10);
+  --glass-blur: 18px;
 
   /* Brillo especular: reflejo diagonal que hace ver el panel como vidrio pulido */
   --glass-sheen: linear-gradient(
     135deg,
-    rgb(255 255 255 / 0.40) 0%,
-    rgb(255 255 255 / 0.08) 28%,
-    rgb(255 255 255 / 0) 50%,
-    rgb(255 255 255 / 0.10) 100%
+    rgb(255 255 255 / 0.70) 0%,
+    rgb(255 255 255 / 0.22) 22%,
+    rgb(255 255 255 / 0.04) 48%,
+    rgb(255 255 255 / 0) 70%,
+    rgb(255 255 255 / 0.16) 100%
   );
   /* Bordes iluminados: arriba e izquierda reciben la luz, abajo un reflejo tenue */
-  --glass-edges: inset 0 1px 0 0 rgb(255 255 255 / 0.9), inset 1px 0 0 0 rgb(255 255 255 / 0.45),
-    inset 0 -1px 0 0 rgb(255 255 255 / 0.18), inset -1px 0 0 0 rgb(255 255 255 / 0.12);
+  --glass-edges: inset 0 1px 0 0 rgb(255 255 255 / 1), inset 1px 0 0 0 rgb(255 255 255 / 0.6),
+    inset 0 -1px 0 0 rgb(30 58 110 / 0.06), inset -1px 0 0 0 rgb(255 255 255 / 0.2),
+    inset 0 -18px 30px -24px rgb(30 58 110 / 0.10);
   /* Grano fino de vidrio esmerilado */
   --glass-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
 }
 
-/* Fondo liso con un degradado diagonal suave (sin manchas de color) */
+/*
+ * Fondo institucional sin esferas: retícula de puntos fina + franjas diagonales de luz
+ * en los colores de la marca. Le dan al vidrio algo que difuminar y refractar.
+ */
 body {
-  background-color: #e6ecf3;
-  background-image: linear-gradient(135deg, #eef3f8 0%, #e3eaf3 45%, #dbe3ee 100%);
+  background-color: #e8ecf7;
+  background-image:
+    radial-gradient(rgb(30 40 120 / 0.11) 1px, transparent 1.4px),
+    linear-gradient(115deg, transparent 4%, rgb(47 111 228 / 0.17) 20%, transparent 36%),
+    linear-gradient(115deg, transparent 30%, rgb(76 184 234 / 0.15) 44%, transparent 58%),
+    linear-gradient(115deg, transparent 56%, rgb(19 160 82 / 0.11) 70%, transparent 84%),
+    linear-gradient(115deg, transparent 80%, rgb(244 196 48 / 0.14) 94%, transparent 100%),
+    linear-gradient(160deg, #f4f6fd 0%, #e7ebf7 50%, #dde2f2 100%);
+  background-size: 22px 22px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
   color: var(--text-primary);
+}
+
+/* Marca de agua del logo, muy tenue, que se ve difuminada a través del cristal */
+body::after {
+  content: "";
+  position: fixed;
+  right: -3vw;
+  bottom: -2vw;
+  width: min(70vw, 980px);
+  aspect-ratio: 428 / 117;
+  z-index: -1;
+  pointer-events: none;
+  background: url("/brand/taxation-smart.png") no-repeat center / contain;
+  opacity: 0.05;
+  filter: saturate(0.6);
 }
 
 /* Entradas suaves */
@@ -135,12 +172,30 @@ html {
   -webkit-backdrop-filter: blur(40px) saturate(190%) brightness(1.05);
 }
 
-/* Cristal oscuro para el sidebar */
+/* Panel de navegación: vidrio claro con más cuerpo, para que los logos se integren sin placa */
+@utility glass-nav {
+  background-color: rgb(255 255 255 / 0.46);
+  background-image:
+    linear-gradient(170deg, rgb(255 255 255 / 0.75) 0%, rgb(255 255 255 / 0.15) 35%, rgb(255 255 255 / 0) 60%, rgb(47 111 228 / 0.06) 100%),
+    var(--glass-noise);
+  background-size: 100% 100%, 160px 160px;
+  border: 1px solid rgb(255 255 255 / 0.85);
+  box-shadow: var(--glass-edges), 0 24px 50px -24px rgb(30 40 120 / 0.35);
+  backdrop-filter: blur(26px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(26px) saturate(180%) brightness(1.05);
+}
+
+/* Franja institucional con los colores de ambas marcas */
+@utility brand-stripe {
+  background-image: linear-gradient(90deg, #1e2a78 0%, #2f6fe4 30%, #4cb8ea 52%, #13a052 76%, #f4c430 100%);
+}
+
+/* Cristal oscuro (índigo) para notificaciones */
 @utility glass-dark {
   background-color: transparent;
   background-image:
     linear-gradient(160deg, rgb(255 255 255 / 0.12) 0%, rgb(255 255 255 / 0.03) 30%, transparent 55%),
-    linear-gradient(180deg, rgb(15 27 45 / 0.64), rgb(15 27 45 / 0.50)),
+    linear-gradient(180deg, rgb(23 27 82 / 0.82), rgb(23 27 82 / 0.70)),
     var(--glass-noise);
   background-size: 100% 100%, 100% 100%, 160px 160px;
   border-color: rgb(255 255 255 / 0.10);
@@ -156,7 +211,7 @@ html {
 /* Tarjetas clicables: se elevan y brillan un poco más al pasar el mouse */
 @utility glass-hover {
   &:hover {
-    background-color: rgb(255 255 255 / 0.62);
+    background-color: rgb(255 255 255 / 0.5);
     box-shadow: var(--glass-edges), 0 16px 40px -12px rgb(15 27 45 / 0.22), 0 0 0 1px rgb(255 255 255 / 0.5);
     transform: translateY(-3px);
   }
@@ -165,10 +220,10 @@ html {
   @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition select-none active:scale-[0.97] active:duration-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
 }
 @utility btn-primary {
-  @apply btn bg-linear-to-b from-brand-500/95 to-brand-700/90 text-white shadow-[0_4px_14px_-4px_rgb(11_138_67/0.6),inset_0_1px_0_0_rgb(255_255_255/0.35)] backdrop-blur hover:from-brand-600 hover:to-brand-700;
+  @apply btn bg-linear-to-br from-brand-500 via-brand-600 to-brand-700 text-white shadow-[0_6px_16px_-6px_rgb(36_83_196/0.7),inset_0_1px_0_0_rgb(255_255_255/0.35)] hover:brightness-110;
 }
 @utility btn-ghost {
-  @apply btn border border-white/60 bg-linear-to-b from-white/50 to-white/20 text-slate-700 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.8),0_1px_3px_rgb(15_27_45/0.08)] backdrop-blur-xl hover:from-white/75 hover:to-white/45;
+  @apply btn border border-white/70 bg-linear-to-b from-white/60 to-white/25 text-ink-800 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.8),0_1px_3px_rgb(15_27_45/0.08)] backdrop-blur-xl hover:from-white/75 hover:to-white/45;
 }
 @utility btn-danger {
   @apply btn bg-linear-to-b from-red-500/95 to-red-700/90 text-white shadow-[0_4px_14px_-4px_rgb(220_38_38/0.55),inset_0_1px_0_0_rgb(255_255_255/0.3)] backdrop-blur hover:from-red-600 hover:to-red-700;

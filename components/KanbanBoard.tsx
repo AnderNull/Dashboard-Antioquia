@@ -22,7 +22,7 @@ const COLUMNAS: { estado: EstadoTarea; accent: string }[] = [
   { estado: "Por Hacer", accent: "bg-slate-400" },
   { estado: "En Progreso", accent: "bg-sky-500" },
   { estado: "En Revisión", accent: "bg-violet-500" },
-  { estado: "Completado", accent: "bg-brand-600" },
+  { estado: "Completado", accent: "bg-gov-600" },
 ];
 
 const PRIORIDAD_STYLE: Record<string, string> = {
