@@ -19,7 +19,7 @@ const PRIO_STYLE: Record<string, string> = {
   Baja: "bg-slate-100 text-slate-600",
 };
 
-export default function AnalysisPanel() {
+export default function AnalysisPanel({ canRun }: { canRun: boolean }) {
   const [data, setData] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +75,12 @@ export default function AnalysisPanel() {
             </p>
           </div>
         </div>
-        <button onClick={run} disabled={loading} className="btn-primary">
+        <button
+          onClick={run}
+          disabled={loading || !canRun}
+          title={canRun ? undefined : "No tienes el permiso «Generar análisis con IA»"}
+          className="btn-primary"
+        >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : data ? <RefreshCw className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
           {loading ? "Analizando datos…" : data ? "Regenerar análisis" : "Generar análisis"}
         </button>

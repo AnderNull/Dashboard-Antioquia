@@ -23,6 +23,7 @@ export default async function TasksPage() {
           initialBloqueos={res.data.bloqueos}
           canEdit={can(session, PERMISOS.editarTareas)}
           canDelete={can(session, PERMISOS.eliminarTareas)}
+          canBloqueos={can(session, PERMISOS.gestionarBloqueos)}
         />
       )}
     </>

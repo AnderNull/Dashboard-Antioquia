@@ -19,7 +19,7 @@ export const SHEETS = {
 export type SheetName = (typeof SHEETS)[keyof typeof SHEETS];
 
 export const HEADERS: Record<SheetName, string[]> = {
-  Usuarios_Autorizados: ["ID", "Nombre", "Email", "PasswordHash", "Rol", "Estado"],
+  Usuarios_Autorizados: ["ID", "Nombre", "Email", "PasswordHash", "Rol", "Estado", "Permisos"],
   Proyectos_Tareas: [
     "ID", "Proyecto", "Requerimiento/Tarea", "Modulo_Taxation", "Estado", "Prioridad",
     "Responsable", "Fecha_Inicio", "Fecha_Entrega", "Bloqueado", "Detalle_Bloqueo", "Fecha_Creacion",
@@ -185,18 +185,40 @@ export async function ensureSchema(): Promise<string[]> {
       requestBody: { requests: missing.map((title) => ({ addSheet: { properties: { title } } })) },
     });
   }
-  for (const sheet of Object.keys(HEADERS) as SheetName[]) {
-    const res = await sheets().spreadsheets.values.get({ spreadsheetId, range: a1(sheet, "1:1") });
-    if (!res.data.values?.[0]?.length) {
-      await sheets().spreadsheets.values.update({
-        spreadsheetId,
-        range: a1(sheet, "A1"),
-        valueInputOption: "RAW",
-        requestBody: { values: [HEADERS[sheet]] },
-      });
-    }
-  }
+  for (const sheet of Object.keys(HEADERS) as SheetName[]) await ensureHeaders(sheet);
   return missing;
+}
+
+/**
+ * Escribe los encabezados si la fila 1 está vacía y agrega al final las columnas
+ * nuevas que falten (p. ej. "Permisos" en hojas creadas con una versión anterior).
+ */
+export async function ensureHeaders(sheet: SheetName): Promise<void> {
+  const { spreadsheetId } = getConfig();
+  const res = await sheets().spreadsheets.values.get({ spreadsheetId, range: a1(sheet, "1:1") });
+  const current = (res.data.values?.[0] ?? []).map((h) => String(h).trim());
+  if (!current.some(Boolean)) {
+    await sheets().spreadsheets.values.update({
+      spreadsheetId,
+      range: a1(sheet, "A1"),
+      valueInputOption: "RAW",
+      requestBody: { values: [HEADERS[sheet]] },
+    });
+    return;
+  }
+  const faltantes = HEADERS[sheet].filter((h) => !current.includes(h));
+  if (!faltantes.length) return;
+  const col = (n: number) => {
+    let s = "";
+    for (n += 1; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s;
+    return s;
+  };
+  await sheets().spreadsheets.values.update({
+    spreadsheetId,
+    range: a1(sheet, `${col(current.length)}1`),
+    valueInputOption: "RAW",
+    requestBody: { values: [faltantes] },
+  });
 }
 
 // ── Accesos tipados por dominio ─────────────────────────────
@@ -210,6 +232,26 @@ export async function findUsuarioByEmail(email: string): Promise<Usuario | null>
   const usuarios = await getUsuarios();
   const target = email.trim().toLowerCase();
   return usuarios.find((u) => u.Email.trim().toLowerCase() === target) ?? null;
+}
+
+// Caché corta de usuarios: la sesión revalida rol, estado y permisos en cada petición
+// sin consultar la hoja cada vez.
+const USUARIOS_TTL_MS = 30_000;
+let usuariosCache: { at: number; data: Usuario[] } | null = null;
+
+/** Busca por ID (estable aunque cambie el correo) y, si no hay ID, por correo. */
+export async function findUsuarioCached({ id, email }: { id?: string; email?: string | null }): Promise<Usuario | null> {
+  if (!usuariosCache || Date.now() - usuariosCache.at > USUARIOS_TTL_MS) {
+    usuariosCache = { at: Date.now(), data: await getUsuarios() };
+  }
+  if (id) return usuariosCache.data.find((u) => u.ID === id) ?? null;
+  const target = (email ?? "").trim().toLowerCase();
+  return target ? (usuariosCache.data.find((u) => u.Email.trim().toLowerCase() === target) ?? null) : null;
+}
+
+/** Llamar después de modificar usuarios para que los cambios apliquen de inmediato. */
+export function invalidarUsuarios() {
+  usuariosCache = null;
 }
 
 /** Carga todo el estado del proyecto en paralelo. */

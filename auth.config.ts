@@ -13,15 +13,16 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isLogin = nextUrl.pathname.startsWith("/login");
-      if (isLogin) {
-        return isLoggedIn ? Response.redirect(new URL("/dashboard", nextUrl)) : true;
-      }
+      // /login siempre es accesible: la propia página redirige si la sesión sigue vigente
+      // (así un usuario desactivado no queda en un bucle de redirecciones).
+      if (isLogin) return true;
       return isLoggedIn; // false => redirige a /login?callbackUrl=...
     },
     jwt({ token, user }) {
       if (user) {
         token.role = user.role;
         token.uid = user.id;
+        token.permisos = user.permisos;
       }
       return token;
     },
@@ -29,6 +30,7 @@ export const authConfig = {
       if (session.user) {
         session.user.role = token.role as string;
         session.user.id = token.uid as string;
+        session.user.permisos = (token.permisos as string[] | undefined) ?? [];
       }
       return session;
     },

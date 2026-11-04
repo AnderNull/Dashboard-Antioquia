@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PERMISOS, handleError, requireRole } from "@/lib/api";
+import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
 import { SHEETS, getBloqueos, today, updateRow } from "@/lib/googleSheets";
 import { bloqueoPatchSchema, zodMessage } from "@/lib/schemas";
 
@@ -7,7 +7,7 @@ type Ctx = { params: Promise<{ id: string }> };
 
 /** Cambia el estado de un bloqueo. Al resolver el último bloqueo abierto, desbloquea la tarea. */
 export async function PATCH(req: Request, { params }: Ctx) {
-  const s = await requireRole(PERMISOS.editarTareas);
+  const s = await requirePermiso(PERMISOS.gestionarBloqueos);
   if (s instanceof NextResponse) return s;
   try {
     const { id } = await params;

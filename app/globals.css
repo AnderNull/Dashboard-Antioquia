@@ -42,7 +42,7 @@
   --grid: #e7e6e2;
 
   /* ── Crystal clear (glassmorphism) ── */
-  --glass-bg: rgb(255 255 255 / 0.18);
+  --glass-bg: rgb(255 255 255 / 0.45);
   --glass-bg-strong: rgb(255 255 255 / 0.58);
   --glass-border: rgb(255 255 255 / 0.55);
   --glass-highlight: inset 0 1px 0 0 rgb(255 255 255 / 0.85);
@@ -64,42 +64,12 @@
   --glass-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
 }
 
-/* Fondo "aurora": manchas de color difuminadas que se ven a través del cristal */
+/* Fondo liso con un degradado diagonal suave (sin manchas de color) */
 body {
-  background-color: #dfe7f1;
-  background-image:
-    radial-gradient(42rem 32rem at 10% 0%, rgb(18 161 80 / 0.45), transparent 62%),
-    radial-gradient(40rem 30rem at 100% 5%, rgb(42 120 214 / 0.50), transparent 62%),
-    radial-gradient(38rem 30rem at 75% 100%, rgb(124 92 246 / 0.42), transparent 62%),
-    radial-gradient(34rem 26rem at 20% 95%, rgb(20 184 166 / 0.38), transparent 62%),
-    linear-gradient(135deg, #e3ecf5 0%, #dde4f3 50%, #e6e1f3 100%);
+  background-color: #e6ecf3;
+  background-image: linear-gradient(135deg, #eef3f8 0%, #e3eaf3 45%, #dbe3ee 100%);
   background-attachment: fixed;
   color: var(--text-primary);
-}
-
-/* Manchas de luz que se desplazan lentamente detrás del cristal */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -15%;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(24rem 20rem at 30% 30%, rgb(16 185 129 / 0.50), transparent 65%),
-    radial-gradient(26rem 22rem at 72% 35%, rgb(59 130 246 / 0.50), transparent 65%),
-    radial-gradient(22rem 18rem at 50% 75%, rgb(168 85 247 / 0.42), transparent 65%),
-    radial-gradient(18rem 14rem at 88% 70%, rgb(245 158 11 / 0.30), transparent 65%);
-  animation: aurora 40s linear infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-/* Recorrido circular continuo (sin rebote al invertir la dirección) */
-@keyframes aurora {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
-  25%  { transform: translate3d(6%, -4%, 0) rotate(6deg) scale(1.08); }
-  50%  { transform: translate3d(0, -7%, 0) rotate(0deg) scale(1.12); }
-  75%  { transform: translate3d(-6%, -3%, 0) rotate(-6deg) scale(1.06); }
-  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
 }
 
 /* Entradas suaves */
@@ -182,7 +152,7 @@ html {
 /* Tarjetas clicables: se elevan y brillan un poco más al pasar el mouse */
 @utility glass-hover {
   &:hover {
-    background-color: rgb(255 255 255 / 0.32);
+    background-color: rgb(255 255 255 / 0.62);
     box-shadow: var(--glass-edges), 0 16px 40px -12px rgb(15 27 45 / 0.22), 0 0 0 1px rgb(255 255 255 / 0.5);
     transform: translateY(-3px);
   }

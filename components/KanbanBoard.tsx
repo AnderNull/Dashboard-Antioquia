@@ -63,11 +63,13 @@ export default function KanbanBoard({
   initialBloqueos,
   canEdit,
   canDelete,
+  canBloqueos,
 }: {
   initialTareas: Tarea[];
   initialBloqueos: Bloqueo[];
   canEdit: boolean;
   canDelete: boolean;
+  canBloqueos: boolean;
 }) {
   const router = useRouter();
   const [tareas, setTareas] = useState(initialTareas);
@@ -373,7 +375,7 @@ export default function KanbanBoard({
                   <td className="whitespace-nowrap px-3 py-3 text-xs text-slate-500">{b.Fecha_Registro}</td>
                   <td className="px-5 py-3">
                     <select
-                      disabled={!canEdit}
+                      disabled={!canBloqueos}
                       value={b.Estado}
                       onChange={(e) => cambiarEstadoBloqueo(b, e.target.value as Bloqueo["Estado"])}
                       className="input py-1 text-xs"

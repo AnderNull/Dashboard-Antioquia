@@ -16,7 +16,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex min-h-screen">
       <Sidebar
-        user={{ name: session.user.name ?? "Usuario", email: session.user.email ?? "", role: session.user.role }}
+        user={{ name: session.user.name ?? "Usuario", email: session.user.email ?? "", role: session.user.role, permisos: session.user.permisos ?? [] }}
         logoutAction={logout}
       />
       <main className="min-w-0 flex-1 px-4 pb-10 pt-20 sm:px-8 lg:pt-8">{children}</main>

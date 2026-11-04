@@ -140,8 +140,17 @@ Reglas generales que aplican a **todas** las pestañas:
 | `PasswordHash` | Sí | Hash bcrypt generado con `npm run hash-password` — **nunca la contraseña en texto plano** | `$2b$12$Qx…` |
 | `Rol` | Sí | `Admin` · `Desarrollador` · `Gobernacion` (**sin tilde**) | `Desarrollador` |
 | `Estado` | Sí | `Activo` · `Inactivo` | `Activo` |
+| `Permisos` | No | Vacío = permisos del rol · `ninguno` · lista separada por comas (ver abajo) | `tareas.editar,analisis.ia` |
 
-**Agregar un usuario nuevo:**
+> **Recomendado:** crea y edita usuarios desde **Administración → Usuarios y permisos** en el dashboard
+> (requiere el permiso «Administrar usuarios y permisos»). La app cifra la contraseña, asigna el ID,
+> agrega la columna `Permisos` si falta y aplica los cambios en menos de 30 s sin cerrar sesión.
+>
+> Claves de permiso válidas: `tareas.editar`, `tareas.eliminar`, `bloqueos.gestionar`,
+> `levantamientos.crear`, `levantamientos.editar`, `levantamientos.eliminar`, `analisis.ia`,
+> `usuarios.administrar`. El rol `Admin` siempre tiene todos.
+
+**Agregar un usuario manualmente en la hoja:**
 
 ```bash
 npm run hash-password -- "ContraseñaDelUsuario"

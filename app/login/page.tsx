@@ -1,13 +1,15 @@
 import { Landmark, ShieldCheck } from "lucide-react";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import LoginForm from "./LoginForm";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ callbackUrl?: string }> }) {
+  // Sesión vigente (revalidada contra la hoja) → directo al dashboard
+  if ((await auth())?.user) redirect("/dashboard");
   const { callbackUrl } = await searchParams;
   return (
     <main className="grid min-h-screen gap-0 lg:grid-cols-2 lg:p-4">
       <section className="relative hidden overflow-hidden rounded-3xl border glass-dark p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-brand-600/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-16 h-96 w-96 rounded-full bg-series-1/20 blur-3xl" />
         <div className="relative flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600">
             <Landmark className="h-6 w-6" />

@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
-import { PERMISOS, handleError, requireRole } from "@/lib/api";
+import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
 import { SHEETS, appendRow, getTareas, newId, today } from "@/lib/googleSheets";
 import { syncBloqueo } from "@/lib/bloqueos";
 import { tareaSchema, zodMessage } from "@/lib/schemas";
-import { ROLES } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const s = await requireRole([...ROLES]);
+  const s = await requirePermiso();
   if (s instanceof NextResponse) return s;
   try {
     return NextResponse.json(await getTareas());
@@ -18,7 +17,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const s = await requireRole(PERMISOS.editarTareas);
+  const s = await requirePermiso(PERMISOS.editarTareas);
   if (s instanceof NextResponse) return s;
   try {
     const parsed = tareaSchema.safeParse(await req.json());

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PERMISOS, handleError, requireRole } from "@/lib/api";
+import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
 import { SHEETS, deleteRow, updateRow } from "@/lib/googleSheets";
 import { syncBloqueo } from "@/lib/bloqueos";
 import { tareaPatchSchema, zodMessage } from "@/lib/schemas";
@@ -7,7 +7,7 @@ import { tareaPatchSchema, zodMessage } from "@/lib/schemas";
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: Request, { params }: Ctx) {
-  const s = await requireRole(PERMISOS.editarTareas);
+  const s = await requirePermiso(PERMISOS.editarTareas);
   if (s instanceof NextResponse) return s;
   try {
     const { id } = await params;
@@ -34,7 +34,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
 }
 
 export async function DELETE(_req: Request, { params }: Ctx) {
-  const s = await requireRole(PERMISOS.eliminarTareas);
+  const s = await requirePermiso(PERMISOS.eliminarTareas);
   if (s instanceof NextResponse) return s;
   try {
     const { id } = await params;

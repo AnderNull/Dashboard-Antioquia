@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { PERMISOS, handleError, requireRole } from "@/lib/api";
+import { PERMISOS, can, handleError, requirePermiso } from "@/lib/api";
 import { SHEETS, appendRow, getLevantamientos, newId, today } from "@/lib/googleSheets";
 import { levantamientoSchema, zodMessage } from "@/lib/schemas";
-import { ROLES } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const s = await requireRole([...ROLES]);
+  const s = await requirePermiso();
   if (s instanceof NextResponse) return s;
   try {
     return NextResponse.json(await getLevantamientos());
@@ -17,7 +16,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const s = await requireRole(PERMISOS.crearLevantamientos);
+  const s = await requirePermiso(PERMISOS.crearLevantamientos);
   if (s instanceof NextResponse) return s;
   try {
     const parsed = levantamientoSchema.safeParse(await req.json());
@@ -27,7 +26,7 @@ export async function POST(req: Request) {
       ID: newId("L"),
       Fecha_Levantamiento: parsed.data.Fecha_Levantamiento || today(),
       // Solo Admin/Gobernación pueden fijar un estado distinto a Pendiente al crear
-      Estado_Aprobacion: PERMISOS.editarLevantamientos.includes(s.user.role as never)
+      Estado_Aprobacion: can(s, PERMISOS.editarLevantamientos)
         ? parsed.data.Estado_Aprobacion
         : "Pendiente",
     };

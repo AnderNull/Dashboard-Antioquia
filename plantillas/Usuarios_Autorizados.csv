@@ -1,1 +1,1 @@
-ID,Nombre,Email,PasswordHash,Rol,Estado
+ID,Nombre,Email,PasswordHash,Rol,Estado,Permisos

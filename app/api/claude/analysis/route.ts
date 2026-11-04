@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { PERMISOS, handleError, requireRole } from "@/lib/api";
+import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
 import { getProjectData } from "@/lib/googleSheets";
 import { analysisSchema, type AnalysisResponse } from "@/lib/analysisSchema";
 
@@ -31,7 +31,7 @@ function daysSince(date: string) {
 }
 
 export async function POST() {
-  const s = await requireRole(PERMISOS.analisisIA);
+  const s = await requirePermiso(PERMISOS.analisisIA);
   if (s instanceof NextResponse) return s;
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: "Falta configurar ANTHROPIC_API_KEY en el servidor." }, { status: 503 });

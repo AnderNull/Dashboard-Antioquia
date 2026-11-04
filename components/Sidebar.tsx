@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import clsx from "clsx";
-import { Activity, BrainCircuit, ClipboardList, KanbanSquare, Landmark, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
+import { Activity, BrainCircuit, ClipboardList, KanbanSquare, Landmark, LayoutDashboard, LogOut, Menu, UserCog, X } from "lucide-react";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -13,6 +13,7 @@ const NAV = [
   { href: "/dashboard/levantamientos", label: "Levantamientos", icon: ClipboardList },
   { href: "/dashboard/analytics", label: "Analítica IA", icon: BrainCircuit },
 ];
+const NAV_ADMIN = [{ href: "/dashboard/admin", label: "Usuarios y permisos", icon: UserCog }];
 
 const ROLE_STYLE: Record<string, string> = {
   Admin: "bg-amber-400/15 text-amber-300 ring-amber-400/30",
@@ -35,7 +36,7 @@ export default function Sidebar({
   user,
   logoutAction,
 }: {
-  user: { name: string; email: string; role: string };
+  user: { name: string; email: string; role: string; permisos: string[] };
   logoutAction: () => Promise<void>;
 }) {
   const pathname = usePathname();
@@ -78,24 +79,31 @@ export default function Sidebar({
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-5">
-          <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-300">Gestión del proyecto</p>
-          {NAV.map(({ href, label, icon: Icon }) => {
-            const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={clsx(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition",
-                  active ? "bg-white/12 text-white shadow-[inset_0_1px_0_0_rgb(255_255_255/0.12)] ring-1 ring-white/10" : "hover:bg-white/5 hover:text-white",
-                )}
-              >
-                <Icon className={clsx("h-4.5 w-4.5", active && "text-emerald-300")} />
-                {label}
-              </Link>
-            );
-          })}
+          {[
+            { titulo: "Gestión del proyecto", items: NAV },
+            ...(user.permisos.includes("usuarios.administrar") ? [{ titulo: "Administración", items: NAV_ADMIN }] : []),
+          ].map(({ titulo, items }) => (
+            <div key={titulo} className="space-y-1 pb-4">
+              <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-300">{titulo}</p>
+              {items.map(({ href, label, icon: Icon }) => {
+                const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className={clsx(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition",
+                      active ? "bg-white/12 text-white shadow-[inset_0_1px_0_0_rgb(255_255_255/0.12)] ring-1 ring-white/10" : "hover:bg-white/5 hover:text-white",
+                    )}
+                  >
+                    <Icon className={clsx("h-4.5 w-4.5", active && "text-emerald-300")} />
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         <div className="border-t border-white/10 p-4">

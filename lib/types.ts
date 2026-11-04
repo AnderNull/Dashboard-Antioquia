@@ -27,7 +27,12 @@ export interface Usuario {
   PasswordHash: string;
   Rol: Rol;
   Estado: "Activo" | "Inactivo";
+  /** Vacío = permisos del rol; "ninguno" = sin permisos; lista separada por comas = personalizados. */
+  Permisos?: string;
 }
+
+/** Usuario sin el hash de contraseña, apto para enviar al navegador. */
+export type UsuarioPublico = Omit<Usuario, "PasswordHash">;
 
 export interface Tarea {
   ID: string;
