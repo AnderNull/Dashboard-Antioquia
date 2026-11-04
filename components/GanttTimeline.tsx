@@ -4,32 +4,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { CalendarClock, ChevronDown, ChevronRight, Crosshair, Lock } from "lucide-react";
 import type { EstadoTarea, Tarea } from "@/lib/types";
+import { DAY_MS, dateOf, fmtDay, localToday, toDay } from "@/lib/dates";
 
 /* ───────────────────────── Fechas (índice de día UTC, sin zonas horarias) ───────────────────────── */
 
-const DAY_MS = 86_400_000;
 const ROW = 40; // alto de fila en px
 const HEADER = 56; // alto del encabezado de dos niveles
 
-/** Convierte "aaaa-mm-dd" o "dd/mm/aaaa" a número de día. */
-function toDay(s?: string): number | null {
-  const v = (s ?? "").trim();
-  let m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(v);
-  if (m) return Date.UTC(+m[1], +m[2] - 1, +m[3]) / DAY_MS;
-  m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(v);
-  if (m) return Date.UTC(+m[3], +m[2] - 1, +m[1]) / DAY_MS;
-  return null;
-}
-const dateOf = (d: number) => new Date(d * DAY_MS);
-const fmt = (d: number, o: Intl.DateTimeFormatOptions) => dateOf(d).toLocaleDateString("es-CO", { timeZone: "UTC", ...o });
+const fmt = fmtDay;
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const dow = (d: number) => (d + 4) % 7; // 0 = domingo (el 1-ene-1970 fue jueves)
 const monday = (d: number) => d - ((dow(d) + 6) % 7);
 const monthKey = (d: number) => `${dateOf(d).getUTCFullYear()}-${dateOf(d).getUTCMonth()}`;
-const localToday = () => {
-  const n = new Date();
-  return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / DAY_MS;
-};
 
 type Seg = { k: string; label: string; from: number; len: number };
 function segments(start: number, days: number, key: (d: number) => string, label: (d: number) => string): Seg[] {

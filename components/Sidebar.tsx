@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import clsx from "clsx";
-import { BrainCircuit, ClipboardList, KanbanSquare, Landmark, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
+import { Activity, BrainCircuit, ClipboardList, KanbanSquare, Landmark, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
 
 const NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/metricas", label: "Métricas en vivo", icon: Activity },
   { href: "/dashboard/tasks", label: "Kanban y Bloqueos", icon: KanbanSquare },
   { href: "/dashboard/levantamientos", label: "Levantamientos", icon: ClipboardList },
   { href: "/dashboard/analytics", label: "Analítica IA", icon: BrainCircuit },
