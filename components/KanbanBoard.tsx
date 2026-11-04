@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
-import { AlertOctagon, CalendarDays, Filter, Loader2, Lock, Plus, Search, Trash2, User } from "lucide-react";
+import { AlertOctagon, CalendarDays, Columns3, Filter, GanttChart, Loader2, Lock, Plus, Search, Trash2, User } from "lucide-react";
 import { Modal } from "./ui";
+import GanttTimeline from "./GanttTimeline";
 import {
   ESTADOS_BLOQUEO,
   ESTADOS_TAREA,
@@ -53,7 +54,9 @@ async function api<T>(url: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
-const isOverdue = (t: Tarea) => t.Estado !== "Completado" && !!t.Fecha_Entrega && t.Fecha_Entrega < new Date().toISOString().slice(0, 10);
+const VISTA_KEY = "taxation-smart:vista-tareas";
+
+const isOverdue =(t: Tarea) => t.Estado !== "Completado" && !!t.Fecha_Entrega && t.Fecha_Entrega < new Date().toISOString().slice(0, 10);
 
 export default function KanbanBoard({
   initialTareas,
@@ -77,6 +80,28 @@ export default function KanbanBoard({
   const [q, setQ] = useState("");
   const [modulo, setModulo] = useState("");
   const [soloBloq, setSoloBloq] = useState(false);
+  const [vista, setVista] = useState<"tablero" | "timeline">("tablero");
+
+  // Recuerda la última vista elegida (solo en este navegador)
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(VISTA_KEY) === "timeline") setVista("timeline");
+    } catch {
+      /* almacenamiento no disponible */
+    }
+  }, []);
+  const cambiarVista = (v: "tablero" | "timeline") => {
+    setVista(v);
+    try {
+      localStorage.setItem(VISTA_KEY, v);
+    } catch {
+      /* ignore */
+    }
+  };
+  const abrir = (t: Tarea) => {
+    setError(null);
+    setDraft({ ...t, Tipo_Bloqueo: bloqueoAbierto.get(t.ID)?.Tipo_Bloqueo ?? "Técnico" });
+  };
 
   const notify = (m: string) => {
     setToast(m);
@@ -191,6 +216,27 @@ export default function KanbanBoard({
 
   return (
     <div className="space-y-6">
+      {/* Selector de vista */}
+      <div className="inline-flex rounded-2xl border border-white/60 bg-white/30 p-1 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.7)] backdrop-blur-xl" role="tablist" aria-label="Vista de tareas">
+        {([
+          ["tablero", "Tablero Kanban", Columns3],
+          ["timeline", "Línea de tiempo", GanttChart],
+        ] as const).map(([id, label, Icon]) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={vista === id}
+            onClick={() => cambiarVista(id)}
+            className={clsx(
+              "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition",
+              vista === id ? "bg-white/85 text-ink-900 shadow-sm" : "text-slate-600 hover:bg-white/50",
+            )}
+          >
+            <Icon className="h-4 w-4" /> {label}
+          </button>
+        ))}
+      </div>
+
       {/* Filtros */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="relative flex-1">
@@ -212,8 +258,11 @@ export default function KanbanBoard({
         )}
       </div>
 
+      {/* Línea de tiempo */}
+      {vista === "timeline" && <GanttTimeline tareas={visibles} onSelect={abrir} />}
+
       {/* Tablero */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className={clsx("grid gap-4 md:grid-cols-2 xl:grid-cols-4", vista !== "tablero" && "hidden")}>
         {COLUMNAS.map(({ estado, accent }) => {
           const items = visibles.filter((t) => t.Estado === estado);
           return (
@@ -242,7 +291,7 @@ export default function KanbanBoard({
                       key={t.ID}
                       draggable={canEdit}
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", t.ID)}
-                      onClick={() => { setError(null); setDraft({ ...t, Tipo_Bloqueo: log?.Tipo_Bloqueo ?? "Técnico" }); }}
+                      onClick={() => abrir(t)}
                       className={clsx(
                         "cursor-pointer rounded-xl border bg-white/50 p-3.5 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.9),0_2px_8px_-2px_rgb(15_27_45/0.08)] backdrop-blur-2xl transition hover:-translate-y-0.5 hover:bg-white/70 hover:shadow-lg",
                         bloq ? "border-red-300/80 ring-1 ring-red-200/70" : "border-white/80",
