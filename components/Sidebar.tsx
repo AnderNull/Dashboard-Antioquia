@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { Activity, BrainCircuit, ClipboardList, KanbanSquare, LayoutDashboard, Ticket, Loader2, LogOut, Menu, Settings2, UserCog, X } from "lucide-react";
+import { Activity, BrainCircuit, ClipboardList, KanbanSquare, LayoutDashboard, Loader2, LogOut, Menu, Settings2, UserCog, X } from "lucide-react";
 import { TaxationLogo } from "./Brand";
 
 const NAV = [
@@ -12,7 +12,6 @@ const NAV = [
   { href: "/dashboard/metricas", label: "Métricas en vivo", icon: Activity },
   { href: "/dashboard/tasks", label: "Kanban y Bloqueos", icon: KanbanSquare },
   { href: "/dashboard/levantamientos", label: "Levantamientos", icon: ClipboardList },
-  { href: "/dashboard/requerimientos", label: "Requerimientos plataforma", icon: Ticket },
   { href: "/dashboard/analytics", label: "Analítica IA", icon: BrainCircuit },
 ];
 const NAV_ADMIN = [
