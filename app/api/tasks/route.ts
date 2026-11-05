@@ -3,6 +3,7 @@ import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
 import { SHEETS, appendRow, getTareas, newId, today } from "@/lib/googleSheets";
 import { syncBloqueo } from "@/lib/bloqueos";
 import { tareaSchema, zodMessage } from "@/lib/schemas";
+import { leerChecklist, progresoChecklist, serializarChecklist } from "@/lib/checklist";
 
 export const dynamic = "force-dynamic";
 
@@ -27,12 +28,15 @@ export async function POST(req: Request) {
     if (tarea.Bloqueado === "No") tarea.Detalle_Bloqueo = "";
     if (tarea.Estado === "Completado" && !tarea.Fecha_Finalizacion) tarea.Fecha_Finalizacion = today();
     if (tarea.Estado !== "Completado") tarea.Fecha_Finalizacion = "";
+    // Lista de tareas normalizada y su avance (hechos/total)
+    const items = leerChecklist(tarea.Checklist);
+    const nueva = { ...tarea, Checklist: serializarChecklist(items), Checklist_Progreso: progresoChecklist(items) };
 
-    await appendRow(SHEETS.tareas, tarea);
-    if (tarea.Bloqueado === "Sí") {
-      await syncBloqueo({ tareaId: tarea.ID, bloqueado: true, descripcion: tarea.Detalle_Bloqueo, tipo: Tipo_Bloqueo });
+    await appendRow(SHEETS.tareas, nueva);
+    if (nueva.Bloqueado === "Sí") {
+      await syncBloqueo({ tareaId: nueva.ID, bloqueado: true, descripcion: nueva.Detalle_Bloqueo, tipo: Tipo_Bloqueo });
     }
-    return NextResponse.json(tarea, { status: 201 });
+    return NextResponse.json(nueva, { status: 201 });
   } catch (e) {
     return handleError(e);
   }

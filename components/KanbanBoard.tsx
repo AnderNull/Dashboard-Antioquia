@@ -7,6 +7,8 @@ import { AlertOctagon, CalendarCheck2, CalendarDays, ChevronDown, ChevronUp, Col
 import { fmtDay, toDay } from "@/lib/dates";
 import { Modal } from "./ui";
 import GanttTimeline from "./GanttTimeline";
+import ChecklistEditor from "./ChecklistEditor";
+import { leerChecklist } from "@/lib/checklist";
 import { opcionesCon, type Catalogos } from "@/lib/catalogos";
 import {
   ESTADOS_BLOQUEO,
@@ -340,8 +342,11 @@ export default function KanbanBoard({
                         )}
                         {t.Checklist_Progreso && (
                           <span
-                            className="inline-flex items-center gap-1 rounded-md bg-white/70 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-slate-600 ring-1 ring-white"
-                            title={(t.Checklist ?? "").split(";").join("\n")}
+                            className={clsx(
+                              "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium tabular-nums ring-1",
+                              /^(\d+)\/\1$/.test(t.Checklist_Progreso) ? "bg-gov-50 text-gov-600 ring-emerald-200" : "bg-white/70 text-slate-600 ring-white",
+                            )}
+                            title={leerChecklist(t.Checklist, t.Checklist_Progreso).map((i) => `${i.hecho ? "✓" : "○"} ${i.texto}`).join("\n")}
                           >
                             <ListChecks className="h-3 w-3" /> {t.Checklist_Progreso}
                           </span>
@@ -533,21 +538,15 @@ export default function KanbanBoard({
                 placeholder="Objetivo, avances, acuerdos de reunión, resultados…"
               />
             </div>
-            {draft.Checklist && (
-              <div className="sm:col-span-2 rounded-xl bg-white/40 p-3 ring-1 ring-white/70">
-                <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  <ListChecks className="h-3.5 w-3.5" /> Lista de comprobación
-                  {draft.Checklist_Progreso && <span className="tabular-nums text-brand-600">· {draft.Checklist_Progreso}</span>}
-                </p>
-                <ul className="space-y-1 text-sm text-slate-700">
-                  {draft.Checklist.split(";").filter(Boolean).map((c, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" /> {c.trim()}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <div className="sm:col-span-2">
+              <ChecklistEditor
+                key={draft.ID ?? "nueva"}
+                value={draft.Checklist}
+                progreso={draft.Checklist_Progreso}
+                disabled={!canEdit || saving}
+                onChange={(checklist, progreso) => setDraft((d) => (d ? { ...d, Checklist: checklist, Checklist_Progreso: progreso } : d))}
+              />
+            </div>
             <div className="sm:col-span-2 rounded-xl border border-red-200/70 bg-red-50/40 p-4">
               <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-red-800">
                 <input type="checkbox" className="accent-red-600" checked={draft.Bloqueado === "Sí"} onChange={(e) => set("Bloqueado", e.target.checked ? "Sí" : "No")} />

@@ -3,6 +3,7 @@ import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
 import { SHEETS, deleteRow, getTareas, today, updateRow } from "@/lib/googleSheets";
 import { syncBloqueo } from "@/lib/bloqueos";
 import { tareaPatchSchema, zodMessage } from "@/lib/schemas";
+import { leerChecklist, progresoChecklist, serializarChecklist } from "@/lib/checklist";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -23,7 +24,15 @@ export async function PATCH(req: Request, { params }: Ctx) {
       patch.Fecha_Finalizacion = actual?.Fecha_Finalizacion || today();
     }
 
-    const updated = await updateRow(SHEETS.tareas, id, patch as Record<string, string>);
+    // Lista de tareas: se normaliza y el avance (hechos/total) se calcula en el servidor
+    const extra: Record<string, string> = {};
+    if (patch.Checklist !== undefined) {
+      const items = leerChecklist(patch.Checklist);
+      patch.Checklist = serializarChecklist(items);
+      extra.Checklist_Progreso = progresoChecklist(items);
+    }
+
+    const updated = await updateRow(SHEETS.tareas, id, { ...(patch as Record<string, string>), ...extra });
     if (!updated) return NextResponse.json({ error: "Tarea no encontrada" }, { status: 404 });
 
     if (patch.Bloqueado !== undefined || patch.Detalle_Bloqueo !== undefined || Tipo_Bloqueo) {
