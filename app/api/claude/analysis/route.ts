@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
-import { getProjectData } from "@/lib/googleSheets";
+import { getProjectData, getRequerimientos } from "@/lib/googleSheets";
 import { analysisSchema, type AnalysisResponse } from "@/lib/analysisSchema";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +38,8 @@ export async function POST() {
   }
 
   try {
-    const { tareas, levantamientos, bloqueos } = await getProjectData();
+    const [{ tareas, levantamientos, bloqueos }, requerimientos] = await Promise.all([getProjectData(), getRequerimientos()]);
+    const reqAbiertos = requerimientos.filter((r) => r.Etapa !== "Resuelto" && r.Etapa !== "Cerrado");
     const hoy = new Date().toISOString().slice(0, 10);
 
     const stats = {
@@ -91,6 +92,21 @@ export async function POST() {
         estado: l.Estado_Aprobacion,
         fecha: l.Fecha_Levantamiento,
       })),
+      // Requerimientos de la plataforma de la empresa (desarrollo → QA → director → resuelto)
+      requerimientos_plataforma: {
+        total: requerimientos.length,
+        abiertos: reqAbiertos.length,
+        por_etapa: Object.fromEntries([...new Set(requerimientos.map((r) => r.Etapa))].map((e) => [e, requerimientos.filter((r) => r.Etapa === e).length])),
+        abiertos_detalle: reqAbiertos.map((r) => ({
+          id: r.ID,
+          titulo: r.Titulo,
+          etapa: r.Etapa,
+          modulo: r.Modulo,
+          asignado: r.Asignado_A,
+          prioridad: r.Prioridad,
+          dias_habiles_abierto: Number(r.Dias_Abiertos) || 0,
+        })),
+      },
     };
 
     const client = new Anthropic();

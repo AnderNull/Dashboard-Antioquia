@@ -1,5 +1,5 @@
 import { google, type sheets_v4 } from "googleapis";
-import type { Bloqueo, Levantamiento, Tarea, Usuario } from "./types";
+import type { Bloqueo, Levantamiento, RequerimientoPlataforma, Tarea, Usuario } from "./types";
 import { construirCatalogos, type Catalogos, type ItemCatalogo } from "./catalogos";
 
 /**
@@ -16,6 +16,7 @@ export const SHEETS = {
   levantamientos: "Levantamientos",
   bloqueos: "Bloqueos_Log",
   config: "Configuracion",
+  requerimientos: "Requerimientos_Plataforma",
 } as const;
 
 export type SheetName = (typeof SHEETS)[keyof typeof SHEETS];
@@ -35,6 +36,11 @@ export const HEADERS: Record<SheetName, string[]> = {
     "ID", "Tarea_ID", "Tipo_Bloqueo", "Descripcion_Bloqueo", "Fecha_Registro", "Fecha_Resolucion", "Estado",
   ],
   Configuracion: ["ID", "Tipo", "Valor", "Descripcion", "Orden", "Estado"],
+  Requerimientos_Plataforma: [
+    "ID", "Titulo", "Estado", "Etapa", "Cliente", "Producto", "Impuesto", "Modulo", "Asignado_A", "Reportado_Por",
+    "Prioridad", "Creado", "Actualizado", "Inicio_Desarrollo", "Ultimo_QA", "Enviado_Comite", "Ultima_Transicion",
+    "Dias_Abiertos", "Fecha_Importacion",
+  ],
 };
 
 type Row = Record<string, string>;
@@ -290,6 +296,16 @@ export async function getItemsCatalogo(): Promise<ItemCatalogo[]> {
   } catch (e) {
     if (e instanceof SheetsConfigError) throw e;
     await ensureSheet(SHEETS.config);
+    return [];
+  }
+}
+
+/** Requerimientos importados de la plataforma. Vacío si aún no se ha importado ninguno. */
+export async function getRequerimientos(): Promise<RequerimientoPlataforma[]> {
+  try {
+    return await listRows<RequerimientoPlataforma>(SHEETS.requerimientos);
+  } catch (e) {
+    if (e instanceof SheetsConfigError) throw e;
     return [];
   }
 }

@@ -10,6 +10,7 @@ const HEADERS = {
   Levantamientos: ["ID", "Codigo_Requerimiento", "Descripcion_Gobernacion", "Modulo_Afectado", "Impacto_Tributario", "Estado_Aprobacion", "Fecha_Levantamiento"],
   Bloqueos_Log: ["ID", "Tarea_ID", "Tipo_Bloqueo", "Descripcion_Bloqueo", "Fecha_Registro", "Fecha_Resolucion", "Estado"],
   Configuracion: ["ID", "Tipo", "Valor", "Descripcion", "Orden", "Estado"],
+  Requerimientos_Plataforma: ["ID", "Titulo", "Estado", "Etapa", "Cliente", "Producto", "Impuesto", "Modulo", "Asignado_A", "Reportado_Por", "Prioridad", "Creado", "Actualizado", "Inicio_Desarrollo", "Ultimo_QA", "Enviado_Comite", "Ultima_Transicion", "Dias_Abiertos", "Fecha_Importacion"],
 };
 
 const { GOOGLE_SHEETS_SPREADSHEET_ID: spreadsheetId, GOOGLE_SERVICE_ACCOUNT_EMAIL: email, GOOGLE_PRIVATE_KEY: key } = process.env;

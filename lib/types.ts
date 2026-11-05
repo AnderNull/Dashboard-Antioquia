@@ -71,6 +71,34 @@ export interface Levantamiento {
   Fecha_Levantamiento: string;
 }
 
+/** Requerimiento de la plataforma de requerimientos de la empresa (pestaña Requerimientos_Plataforma). */
+export interface RequerimientoPlataforma {
+  ID: string;
+  Titulo: string;
+  /** Código interno del estado, p. ej. "escalado_a_qa". */
+  Estado: string;
+  /** Etapa legible: En Desarrollo, En QA, Revisión Director, Resuelto, Cerrado. */
+  Etapa: string;
+  Cliente: string;
+  Producto: string;
+  Impuesto: string;
+  Modulo: string;
+  Asignado_A: string;
+  Reportado_Por: string;
+  /** inmediata · urgente · alta · normal · baja · ninguna */
+  Prioridad: string;
+  /** Fechas "AAAA-MM-DD HH:MM" */
+  Creado: string;
+  Actualizado: string;
+  Inicio_Desarrollo: string;
+  Ultimo_QA: string;
+  Enviado_Comite: string;
+  Ultima_Transicion: string;
+  /** Días hábiles abiertos según la plataforma (a la fecha del reporte). */
+  Dias_Abiertos: string;
+  Fecha_Importacion: string;
+}
+
 export interface Bloqueo {
   ID: string;
   Tarea_ID: string;
