@@ -24,5 +24,3 @@ yarn-debug.log*
 Thumbs.db
 .vercel
 
-# Formatos de levantamiento generados (pueden contener información del cliente)
-/levantamientos-generados/

@@ -4,7 +4,7 @@ import { extname } from "node:path";
 import { inflateRawSync } from "node:zlib";
 
 // ── Lectura de .xlsx sin dependencias (zip + XML) ──────────────────────────
-export function unzip(buf) {
+function unzip(buf) {
   let eocd = buf.length - 22;
   while (eocd >= 0 && buf.readUInt32LE(eocd) !== 0x06054b50) eocd--;
   if (eocd < 0) throw new Error("Archivo .xlsx no válido");
