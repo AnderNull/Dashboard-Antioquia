@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PERMISOS, handleError, requirePermiso } from "@/lib/api";
-import { SHEETS, deleteRow, updateRow } from "@/lib/googleSheets";
+import { SHEETS, deleteRow, getTareas, today, updateRow } from "@/lib/googleSheets";
 import { syncBloqueo } from "@/lib/bloqueos";
 import { tareaPatchSchema, zodMessage } from "@/lib/schemas";
 
@@ -15,6 +15,13 @@ export async function PATCH(req: Request, { params }: Ctx) {
     if (!parsed.success) return NextResponse.json({ error: zodMessage(parsed.error) }, { status: 400 });
     const { Tipo_Bloqueo, ...patch } = parsed.data;
     if (patch.Bloqueado === "No") patch.Detalle_Bloqueo = "";
+
+    // Fecha real de finalización: se fija al pasar a Completado y se limpia al reabrir la tarea
+    if (patch.Estado && patch.Estado !== "Completado") patch.Fecha_Finalizacion = "";
+    if (patch.Estado === "Completado" && !patch.Fecha_Finalizacion) {
+      const actual = (await getTareas()).find((t) => t.ID === id);
+      patch.Fecha_Finalizacion = actual?.Fecha_Finalizacion || today();
+    }
 
     const updated = await updateRow(SHEETS.tareas, id, patch as Record<string, string>);
     if (!updated) return NextResponse.json({ error: "Tarea no encontrada" }, { status: 404 });

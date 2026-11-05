@@ -10,7 +10,8 @@
     "lint": "next lint",
     "hash-password": "node scripts/hash-password.mjs",
     "init-sheets": "node --env-file=.env.local scripts/init-sheets.mjs",
-    "set-google-key": "node scripts/set-google-key.mjs"
+    "set-google-key": "node scripts/set-google-key.mjs",
+    "import-planner": "node --env-file=.env.local scripts/import-planner.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.4.0",

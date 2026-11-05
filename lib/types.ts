@@ -47,6 +47,18 @@ export interface Tarea {
   Bloqueado: "Sí" | "No";
   Detalle_Bloqueo: string;
   Fecha_Creacion: string;
+  /** Descripción o notas detalladas de la actividad. */
+  Descripcion?: string;
+  /** Fecha real en que se completó (AAAA-MM-DD). */
+  Fecha_Finalizacion?: string;
+  /** Elementos de la lista de comprobación separados por ";". */
+  Checklist?: string;
+  /** Avance de la lista de comprobación, p. ej. "1/2". */
+  Checklist_Progreso?: string;
+  /** Etiquetas separadas por ";". */
+  Etiquetas?: string;
+  /** De dónde viene la tarea (p. ej. "Planner · Impuesto Vehicular.xlsx"). */
+  Origen?: string;
 }
 
 export interface Levantamiento {

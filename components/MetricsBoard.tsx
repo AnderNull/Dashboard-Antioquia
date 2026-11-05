@@ -169,6 +169,11 @@ export default function MetricsBoard({ initialTareas }: { initialTareas: Tarea[]
       usuarios: porUsuario(ctx),
       agenda: [...agenda.entries()].sort((a, b) => a[0] - b[0]),
       prog7: programadas.filter((c) => c.s !== null && c.s - today <= 7).length,
+      // Puntualidad: completadas con fecha prevista y fecha real de finalización
+      puntualidad: (() => {
+        const medibles = ctx.filter((c) => c.situacion === "completada" && c.t.Fecha_Entrega && c.t.Fecha_Finalizacion);
+        return { medibles: medibles.length, aTiempo: medibles.filter((c) => c.t.Fecha_Finalizacion! <= c.t.Fecha_Entrega).length };
+      })(),
     };
   }, [tareas, today]);
 
@@ -210,6 +215,16 @@ export default function MetricsBoard({ initialTareas }: { initialTareas: Tarea[]
     { label: "Vencen en 7 días", value: m.vencen7.length, hint: "Entregas próximas sin completar", icon: AlarmClock, tone: "text-amber-700 bg-amber-50" },
     { label: "Vencidas", value: m.vencidas.length, hint: "Entrega pasada sin completar", icon: TriangleAlert, tone: "text-red-600 bg-red-50" },
     { label: "Bloqueadas", value: m.bloqueadas.length, hint: "Activas, sin resolver", icon: Lock, tone: "text-red-600 bg-red-50" },
+    { label: "Completadas", value: m.completadas.length, hint: `${m.ctx.length ? Math.round((m.completadas.length / m.ctx.length) * 100) : 0}% del total de actividades`, icon: CheckCircle2, tone: "text-gov-600 bg-gov-50" },
+    {
+      label: "Entregadas a tiempo",
+      value: m.puntualidad.medibles ? `${Math.round((m.puntualidad.aTiempo / m.puntualidad.medibles) * 100)}%` : "—",
+      hint: m.puntualidad.medibles
+        ? `${m.puntualidad.aTiempo} de ${m.puntualidad.medibles} completadas con fecha prevista`
+        : "Sin completadas con fecha de entrega y finalización",
+      icon: CalendarClock,
+      tone: "text-brand-600 bg-brand-50",
+    },
   ];
 
   const chartUsers = m.usuarios.filter((u) => u.pendientes > 0);
@@ -267,7 +282,7 @@ export default function MetricsBoard({ initialTareas }: { initialTareas: Tarea[]
       </section>
 
       {/* KPIs */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map(({ label, value, hint, icon: Icon, tone }) => (
           <div key={label} className="card glass-hover p-5">
             <div className="flex items-start justify-between gap-2">

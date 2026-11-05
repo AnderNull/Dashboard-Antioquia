@@ -25,6 +25,8 @@ export async function POST(req: Request) {
     const { Tipo_Bloqueo, ...data } = parsed.data;
     const tarea = { ...data, ID: newId("T"), Fecha_Creacion: today() };
     if (tarea.Bloqueado === "No") tarea.Detalle_Bloqueo = "";
+    if (tarea.Estado === "Completado" && !tarea.Fecha_Finalizacion) tarea.Fecha_Finalizacion = today();
+    if (tarea.Estado !== "Completado") tarea.Fecha_Finalizacion = "";
 
     await appendRow(SHEETS.tareas, tarea);
     if (tarea.Bloqueado === "Sí") {

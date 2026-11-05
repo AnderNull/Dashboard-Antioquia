@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 
 const HEADERS = {
   Usuarios_Autorizados: ["ID", "Nombre", "Email", "PasswordHash", "Rol", "Estado", "Permisos"],
-  Proyectos_Tareas: ["ID", "Proyecto", "Requerimiento/Tarea", "Modulo_Taxation", "Estado", "Prioridad", "Responsable", "Fecha_Inicio", "Fecha_Entrega", "Bloqueado", "Detalle_Bloqueo", "Fecha_Creacion"],
+  Proyectos_Tareas: ["ID", "Proyecto", "Requerimiento/Tarea", "Modulo_Taxation", "Estado", "Prioridad", "Responsable", "Fecha_Inicio", "Fecha_Entrega", "Bloqueado", "Detalle_Bloqueo", "Fecha_Creacion", "Descripcion", "Fecha_Finalizacion", "Checklist", "Checklist_Progreso", "Etiquetas", "Origen"],
   Levantamientos: ["ID", "Codigo_Requerimiento", "Descripcion_Gobernacion", "Modulo_Afectado", "Impacto_Tributario", "Estado_Aprobacion", "Fecha_Levantamiento"],
   Bloqueos_Log: ["ID", "Tarea_ID", "Tipo_Bloqueo", "Descripcion_Bloqueo", "Fecha_Registro", "Fecha_Resolucion", "Estado"],
   Configuracion: ["ID", "Tipo", "Valor", "Descripcion", "Orden", "Estado"],

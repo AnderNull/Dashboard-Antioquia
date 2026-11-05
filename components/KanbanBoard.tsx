@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
-import { AlertOctagon, CalendarDays, Columns3, Filter, GanttChart, Loader2, Lock, Plus, Search, Trash2, User } from "lucide-react";
+import { AlertOctagon, CalendarCheck2, CalendarDays, ChevronDown, ChevronUp, Columns3, Filter, GanttChart, ListChecks, Loader2, Lock, Plus, Search, Tag, Trash2, User } from "lucide-react";
+import { fmtDay, toDay } from "@/lib/dates";
 import { Modal } from "./ui";
 import GanttTimeline from "./GanttTimeline";
 import { opcionesCon, type Catalogos } from "@/lib/catalogos";
@@ -56,6 +57,25 @@ async function api<T>(url: string, init?: RequestInit): Promise<T> {
 
 const VISTA_KEY = "taxation-smart:vista-tareas";
 
+const LIMITE_COLUMNA = 8;
+const fechaCorta = (s?: string) => {
+  const d = toDay(s);
+  return d === null ? s ?? "" : fmtDay(d, { day: "2-digit", month: "short", year: "2-digit" });
+};
+const etiquetasDe = (t: Tarea) =>
+  (t.Etiquetas ?? "")
+    .split(";")
+    .map((e) => e.trim())
+    // "Completado/Completada" repite el estado: no se muestra como etiqueta
+    .filter((e) => e && !/^completad[oa]$/i.test(e));
+/** Activas: entrega más próxima primero. Completadas: finalizadas más recientes primero. */
+const ordenColumna = (a: Tarea, b: Tarea) =>
+  a.Estado === "Completado"
+    ? (b.Fecha_Finalizacion || b.Fecha_Entrega || "").localeCompare(a.Fecha_Finalizacion || a.Fecha_Entrega || "")
+    : (a.Fecha_Entrega || "9999").localeCompare(b.Fecha_Entrega || "9999");
+const entregadaTarde = (t: Tarea) =>
+  t.Estado === "Completado" && !!t.Fecha_Finalizacion && !!t.Fecha_Entrega && t.Fecha_Finalizacion > t.Fecha_Entrega;
+
 const isOverdue =(t: Tarea) => t.Estado !== "Completado" && !!t.Fecha_Entrega && t.Fecha_Entrega < new Date().toISOString().slice(0, 10);
 
 export default function KanbanBoard({
@@ -84,6 +104,7 @@ export default function KanbanBoard({
   const [q, setQ] = useState("");
   const [modulo, setModulo] = useState("");
   const [soloBloq, setSoloBloq] = useState(false);
+  const [expandidas, setExpandidas] = useState<Set<EstadoTarea>>(new Set());
   const [vista, setVista] = useState<"tablero" | "timeline">("tablero");
 
   // Recuerda la última vista elegida (solo en este navegador)
@@ -268,7 +289,9 @@ export default function KanbanBoard({
       {/* Tablero */}
       <div className={clsx("grid gap-4 md:grid-cols-2 xl:grid-cols-4", vista !== "tablero" && "hidden")}>
         {COLUMNAS.map(({ estado, accent }) => {
-          const items = visibles.filter((t) => t.Estado === estado);
+          const items = visibles.filter((t) => t.Estado === estado).sort(ordenColumna);
+          const abierta = expandidas.has(estado);
+          const mostradas = abierta ? items : items.slice(0, LIMITE_COLUMNA);
           return (
             <section
               key={estado}
@@ -287,8 +310,9 @@ export default function KanbanBoard({
                 <span className="rounded-full bg-white/50 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-600">{items.length}</span>
               </header>
               <div className="flex flex-1 flex-col gap-3">
-                {items.map((t) => {
+                {mostradas.map((t) => {
                   const bloq = t.Bloqueado === "Sí";
+                  const tags = etiquetasDe(t);
                   const log = bloqueoAbierto.get(t.ID);
                   return (
                     <article
@@ -309,9 +333,31 @@ export default function KanbanBoard({
                         </span>
                       </div>
                       <p className="text-sm font-medium leading-snug text-ink-900">{t["Requerimiento/Tarea"]}</p>
-                      {t.Modulo_Taxation && (
-                        <span className="mt-2 inline-block rounded-md bg-sky-50 px-2 py-0.5 text-[11px] font-medium text-sky-700">{t.Modulo_Taxation}</span>
-                      )}
+                      {t.Descripcion && <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-500">{t.Descripcion}</p>}
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        {t.Modulo_Taxation && (
+                          <span className="rounded-md bg-brand-50/90 px-2 py-0.5 text-[11px] font-medium text-brand-600">{t.Modulo_Taxation}</span>
+                        )}
+                        {t.Checklist_Progreso && (
+                          <span
+                            className="inline-flex items-center gap-1 rounded-md bg-white/70 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-slate-600 ring-1 ring-white"
+                            title={(t.Checklist ?? "").split(";").join("\n")}
+                          >
+                            <ListChecks className="h-3 w-3" /> {t.Checklist_Progreso}
+                          </span>
+                        )}
+                        {tags.map((e) => (
+                          <span
+                            key={e}
+                            className={clsx(
+                              "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium",
+                              /aplaza|reprogram/i.test(e) ? "bg-amber-50 text-amber-800" : "bg-white/70 text-slate-600 ring-1 ring-white",
+                            )}
+                          >
+                            <Tag className="h-3 w-3" /> {e}
+                          </span>
+                        ))}
+                      </div>
                       {bloq && (
                         <div className="mt-2.5 rounded-lg border border-red-200/80 bg-red-50/70 p-2 text-xs text-red-800">
                           <p className="flex items-center gap-1.5 font-bold uppercase tracking-wide">
@@ -322,16 +368,41 @@ export default function KanbanBoard({
                       )}
                       <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
                         <span className="flex items-center gap-1 truncate"><User className="h-3 w-3" /> {t.Responsable || "Sin asignar"}</span>
-                        {t.Fecha_Entrega && (
-                          <span className={clsx("flex items-center gap-1", isOverdue(t) && "font-semibold text-red-600")}>
-                            <CalendarDays className="h-3 w-3" /> {t.Fecha_Entrega}
+                        {t.Estado === "Completado" && t.Fecha_Finalizacion ? (
+                          <span
+                            className={clsx("flex shrink-0 items-center gap-1", entregadaTarde(t) ? "text-amber-700" : "text-gov-600")}
+                            title={entregadaTarde(t) ? "Entregada después de la fecha prevista (" + fechaCorta(t.Fecha_Entrega) + ")" : "Entregada a tiempo"}
+                          >
+                            <CalendarCheck2 className="h-3 w-3" /> {fechaCorta(t.Fecha_Finalizacion)}
                           </span>
+                        ) : (
+                          t.Fecha_Entrega && (
+                            <span className={clsx("flex shrink-0 items-center gap-1", isOverdue(t) && "font-semibold text-red-600")}>
+                              <CalendarDays className="h-3 w-3" /> {fechaCorta(t.Fecha_Entrega)}
+                            </span>
+                          )
                         )}
                       </div>
                     </article>
                   );
                 })}
                 {items.length === 0 && <p className="py-8 text-center text-xs text-slate-400">Sin tareas</p>}
+                {items.length > LIMITE_COLUMNA && (
+                  <button
+                    onClick={() =>
+                      setExpandidas((prev) => {
+                        const n = new Set(prev);
+                        if (n.has(estado)) n.delete(estado);
+                        else n.add(estado);
+                        return n;
+                      })
+                    }
+                    className="btn-ghost w-full py-1.5 text-xs"
+                  >
+                    {abierta ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                    {abierta ? "Mostrar menos" : "Ver " + (items.length - LIMITE_COLUMNA) + " más"}
+                  </button>
+                )}
               </div>
             </section>
           );
@@ -441,6 +512,42 @@ export default function KanbanBoard({
               <label className="label">Fecha entrega</label>
               <input type="date" className="input" value={draft.Fecha_Entrega ?? ""} onChange={(e) => set("Fecha_Entrega", e.target.value)} />
             </div>
+            {draft.Estado === "Completado" && (
+              <div>
+                <label className="label">Fecha de finalización real</label>
+                <input type="date" className="input" value={draft.Fecha_Finalizacion ?? ""} onChange={(e) => set("Fecha_Finalizacion", e.target.value)} />
+                <p className="mt-1 text-[11px] text-slate-500">Si la dejas vacía se usa la fecha de hoy.</p>
+              </div>
+            )}
+            <div className={draft.Estado === "Completado" ? "" : "sm:col-span-2"}>
+              <label className="label">Etiquetas</label>
+              <input className="input" value={draft.Etiquetas ?? ""} onChange={(e) => set("Etiquetas", e.target.value)} placeholder="Separadas por punto y coma: Aplazada; Reprogramada" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Descripción / notas</label>
+              <textarea
+                rows={draft.Descripcion && draft.Descripcion.length > 300 ? 8 : 4}
+                className="input leading-relaxed"
+                value={draft.Descripcion ?? ""}
+                onChange={(e) => set("Descripcion", e.target.value)}
+                placeholder="Objetivo, avances, acuerdos de reunión, resultados…"
+              />
+            </div>
+            {draft.Checklist && (
+              <div className="sm:col-span-2 rounded-xl bg-white/40 p-3 ring-1 ring-white/70">
+                <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <ListChecks className="h-3.5 w-3.5" /> Lista de comprobación
+                  {draft.Checklist_Progreso && <span className="tabular-nums text-brand-600">· {draft.Checklist_Progreso}</span>}
+                </p>
+                <ul className="space-y-1 text-sm text-slate-700">
+                  {draft.Checklist.split(";").filter(Boolean).map((c, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" /> {c.trim()}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="sm:col-span-2 rounded-xl border border-red-200/70 bg-red-50/40 p-4">
               <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-red-800">
                 <input type="checkbox" className="accent-red-600" checked={draft.Bloqueado === "Sí"} onChange={(e) => set("Bloqueado", e.target.checked ? "Sí" : "No")} />
@@ -462,7 +569,12 @@ export default function KanbanBoard({
               )}
             </div>
           </fieldset>
-          {draft.Fecha_Creacion && <p className="mt-3 text-xs text-slate-400">Creada el {draft.Fecha_Creacion}</p>}
+          {(draft.Fecha_Creacion || draft.Origen) && (
+            <p className="mt-3 text-xs text-slate-400">
+              {draft.Fecha_Creacion && <>Creada el {fechaCorta(draft.Fecha_Creacion)}</>}
+              {draft.Origen && <> · Origen: {draft.Origen}</>}
+            </p>
+          )}
           {error && <p className="mt-3 rounded-lg bg-red-50 p-2 text-sm text-red-700">{error}</p>}
           <div className="mt-5 flex items-center justify-between gap-2">
             <div>

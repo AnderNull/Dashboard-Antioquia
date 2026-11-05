@@ -25,6 +25,7 @@ export const HEADERS: Record<SheetName, string[]> = {
   Proyectos_Tareas: [
     "ID", "Proyecto", "Requerimiento/Tarea", "Modulo_Taxation", "Estado", "Prioridad",
     "Responsable", "Fecha_Inicio", "Fecha_Entrega", "Bloqueado", "Detalle_Bloqueo", "Fecha_Creacion",
+    "Descripcion", "Fecha_Finalizacion", "Checklist", "Checklist_Progreso", "Etiquetas", "Origen",
   ],
   Levantamientos: [
     "ID", "Codigo_Requerimiento", "Descripcion_Gobernacion", "Modulo_Afectado",
@@ -152,6 +153,7 @@ export async function listRows<T>(sheet: SheetName): Promise<T[]> {
 
 export async function appendRow(sheet: SheetName, data: Row): Promise<void> {
   const { spreadsheetId } = getConfig();
+  await ensureHeadersOnce(sheet);
   const { headers } = await readTable(sheet, true);
   await sheets().spreadsheets.values.append({
     spreadsheetId,
@@ -166,6 +168,7 @@ export async function appendRow(sheet: SheetName, data: Row): Promise<void> {
 /** Actualiza (merge) la fila cuyo ID coincida. Devuelve la fila resultante o null. */
 export async function updateRow(sheet: SheetName, id: string, patch: Row): Promise<Row | null> {
   const { spreadsheetId } = getConfig();
+  await ensureHeadersOnce(sheet);
   const { headers, entries } = await readTable(sheet, true);
   const found = entries.find((e) => e.row.ID === id);
   if (!found) return null;
@@ -215,6 +218,14 @@ export async function ensureSchema(): Promise<string[]> {
   }
   for (const sheet of Object.keys(HEADERS) as SheetName[]) await ensureHeaders(sheet);
   return missing;
+}
+
+// Verifica columnas nuevas una sola vez por proceso antes de la primera escritura.
+const headersVerificados = new Set<SheetName>();
+async function ensureHeadersOnce(sheet: SheetName) {
+  if (headersVerificados.has(sheet)) return;
+  await ensureHeaders(sheet);
+  headersVerificados.add(sheet);
 }
 
 /**

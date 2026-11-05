@@ -51,6 +51,8 @@ export async function POST() {
       vencidas: tareas.filter((t) => t.Estado !== "Completado" && t.Fecha_Entrega && t.Fecha_Entrega < hoy).length,
       bloqueos_abiertos: bloqueos.filter((b) => b.Estado !== "Resuelto").length,
       levantamientos: levantamientos.length,
+      completadas_con_fechas: tareas.filter((t) => t.Estado === "Completado" && t.Fecha_Entrega && t.Fecha_Finalizacion).length,
+      entregadas_a_tiempo: tareas.filter((t) => t.Estado === "Completado" && t.Fecha_Entrega && t.Fecha_Finalizacion && t.Fecha_Finalizacion <= t.Fecha_Entrega).length,
     };
 
     const datos = {
@@ -64,8 +66,12 @@ export async function POST() {
         prioridad: t.Prioridad,
         responsable: t.Responsable,
         entrega: t.Fecha_Entrega,
+        finalizada: t.Fecha_Finalizacion || undefined,
         bloqueada: t.Bloqueado === "Sí",
         detalle_bloqueo: t.Detalle_Bloqueo || undefined,
+        etiquetas: t.Etiquetas || undefined,
+        // Contexto breve: más detalle en las abiertas, que son las que requieren decisiones
+        notas: t.Descripcion ? t.Descripcion.slice(0, t.Estado === "Completado" ? 160 : 500) : undefined,
       })),
       bloqueos: bloqueos.map((b) => ({
         id: b.ID,

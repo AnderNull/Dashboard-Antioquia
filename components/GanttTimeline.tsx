@@ -386,7 +386,7 @@ export default function GanttTimeline({ tareas, onSelect }: { tareas: Tarea[]; o
                 const bloq = t.Bloqueado === "Sí";
                 const l = x(it.s);
                 const w = (it.e - it.s + 1) * px;
-                const tip = `${t.ID} · ${t["Requerimiento/Tarea"]}\n${t.Estado} · ${t.Responsable || "Sin asignar"}\n${fechaCorta(it.s)} → ${fechaCorta(it.e)} (${it.e - it.s + 1} días)${bloq ? `\nBLOQUEADA: ${t.Detalle_Bloqueo}` : ""}${vencida(it) ? "\nVENCIDA" : ""}`;
+                const tip = `${t.ID} · ${t["Requerimiento/Tarea"]}\n${t.Estado} · ${t.Responsable || "Sin asignar"}\n${fechaCorta(it.s)} → ${fechaCorta(it.e)} (${it.e - it.s + 1} días)${t.Fecha_Finalizacion ? `\nFinalizada: ${t.Fecha_Finalizacion}` : ""}${bloq ? `\nBLOQUEADA: ${t.Detalle_Bloqueo}` : ""}${vencida(it) ? "\nVENCIDA" : ""}${t.Descripcion ? `\n\n${t.Descripcion.slice(0, 220)}${t.Descripcion.length > 220 ? "…" : ""}` : ""}`;
                 return (
                   <div
                     key={`tb-${t.ID}-${i}`}

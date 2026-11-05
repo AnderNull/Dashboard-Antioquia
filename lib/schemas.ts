@@ -20,6 +20,9 @@ const tareaShape = {
   Fecha_Entrega: fecha,
   Bloqueado: z.enum(["Sí", "No"]),
   Detalle_Bloqueo: txt(1000),
+  Descripcion: txt(5000),
+  Fecha_Finalizacion: fecha,
+  Etiquetas: txt(300),
   // Solo para registrar el bloqueo en Bloqueos_Log (no es columna de la tarea)
   Tipo_Bloqueo: z.enum(TIPOS_BLOQUEO).optional(),
 };
@@ -36,6 +39,9 @@ export const tareaSchema = z.object({
   Fecha_Entrega: fecha.default(""),
   Bloqueado: tareaShape.Bloqueado.default("No"),
   Detalle_Bloqueo: tareaShape.Detalle_Bloqueo.default(""),
+  Descripcion: tareaShape.Descripcion.default(""),
+  Fecha_Finalizacion: fecha.default(""),
+  Etiquetas: tareaShape.Etiquetas.default(""),
 });
 
 const levShape = {
